@@ -37,6 +37,7 @@ public:
 
 private:
     bool is_prime(int num);
+    int make_positive(int num, int mod);
     void calculate_e();
     void calculate_d();
     void set_params();
