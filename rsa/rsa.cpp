@@ -1,25 +1,27 @@
 #include <iostream>
 #include <random>
+#include <math.h>
 #include "rsa.h"
 
-RSA::RSA(double p, double q)
-    :p{p}, q{q}
+RSA::RSA(int p, int q)
+    :p(p), q(q), phi(0), n(0), e(0), d(0), public_key(nullptr), private_key(nullptr)
 {
 }
 
-int RSA::gcd(int a, int b)
+bool RSA::is_prime(int num)
 {
-    if(b == 0)
-        return a;
+    for(int i = 2; i < num; i++)
+        if(num % i == 0)
+            return false;
     
-    return gcd(b, a % b);
+    return true;
 }
 
-void RSA::choose_e()
+void RSA::calculate_e()
 {   
     while(e < phi)
     {
-        if(gcd(e, phi) == 1 && e > 1)
+        if(euclidean(e, phi) == 1 && e > 1)
             break;
 
         e++;
@@ -28,22 +30,49 @@ void RSA::choose_e()
 
 void RSA::calculate_d()
 {
-    d = (1 + (k * phi)) / e;
+    int x = 0;
+    extended_euclidean(phi, n, x, d);
 }
 
-double RSA::encrypt(double message)
-{   
-    calculate_n();
-    calculate_phi();
-    choose_e();
-
-    double c = pow(message, e);
-    return fmod(c, n);
-}
-
-double RSA::decrypt(double message)
+void RSA::set_params()
 {
+    if(is_prime(p) && is_prime(q))
+    {
+        n = p * q;
+        phi = (p - 1) * (q - 1);
+    }
+
+    calculate_e();
     calculate_d();
-    double m = pow(message, d);
-    return fmod(m, n);
 }
+
+void RSA::gen_public_key()
+{
+    this->public_key = new PublicKey{this->e, this->n};
+}
+
+void RSA::gen_private_key()
+{
+    this->private_key = new PrivateKey{this->d, this->n};
+}
+
+void RSA::gen_keys()
+{
+    set_params();
+    gen_public_key();
+    gen_private_key();
+}
+
+int RSA::encrypt(int message)
+{   
+    gen_keys();
+    std::cout << "Public key e: " << public_key->e << " Public key n: " << public_key->n << std::endl;
+    std::cout << "Private key d: " << private_key->d << " Private key n: " << private_key->n << std::endl;
+    return 1;
+}
+
+int RSA::decrypt(int message)
+{
+    return 1;
+}
+
