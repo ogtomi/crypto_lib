@@ -17,6 +17,18 @@ bool RSA::is_prime(int num)
     return true;
 }
 
+int RSA::make_positive(int num, int mod)
+{
+    int tmp = num;
+
+    while(tmp < 0)
+    {
+        tmp += mod;
+    }
+
+    return tmp;
+}
+
 void RSA::calculate_e()
 {   
     while(e < phi)
@@ -32,6 +44,7 @@ void RSA::calculate_d()
 {
     int x = 0;
     extended_euclidean(phi, n, x, d);
+    d = d < 0 ? make_positive(d, this->phi) : d;
 }
 
 void RSA::set_params()
@@ -66,13 +79,16 @@ void RSA::gen_keys()
 int RSA::encrypt(int message)
 {   
     gen_keys();
+    std::cout << "Phi: " << phi << std::endl;
     std::cout << "Public key e: " << public_key->e << " Public key n: " << public_key->n << std::endl;
     std::cout << "Private key d: " << private_key->d << " Private key n: " << private_key->n << std::endl;
-    return 1;
+    int c = pow(message, public_key->e);
+
+    return c % public_key->n;
 }
 
 int RSA::decrypt(int message)
 {
-    return 1;
+    int m = pow(message, private_key->d);
+    return m % private_key->n;
 }
-
