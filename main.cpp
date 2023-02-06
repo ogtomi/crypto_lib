@@ -3,17 +3,21 @@
 
 int main()
 {
-    int p = 3;
-    int q = 5;
+    int p = 2;
+    int q = 7;
+
     RSA rsa(p, q);
+    rsa.gen_keys();
 
-    int message = 8;
+    int message = 14;
     
-    int encrypted_message = rsa.encrypt(message);
-    int decrypted_message = rsa.decrypt(encrypted_message);
+    double encrypted_message = rsa.encrypt(message);
+    double decrypted_message = rsa.decrypt(encrypted_message);
 
-    std::cout << message << std::endl;
-    std::cout << encrypted_message << std::endl;
-    std::cout << decrypted_message << std::endl;
+    std::cout << "____________________" << std::endl;
+    std::cout << "Plain message: " << message << std::endl;
+    std::cout << "Encrypted message: " << encrypted_message << std::endl;
+    std::cout << "Decrypted message: " << decrypted_message << std::endl;
+
     return 0;
 }
