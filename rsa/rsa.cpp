@@ -1,6 +1,6 @@
 #include <iostream>
 #include <random>
-#include <math.h>
+#include <cmath>
 #include "rsa.h"
 
 RSA::RSA(int p, int q)
@@ -8,7 +8,13 @@ RSA::RSA(int p, int q)
 {
 }
 
-bool RSA::is_prime(int num)
+RSA::~RSA()
+{
+    delete public_key;
+    delete private_key;
+}
+
+bool RSA::is_prime(int num) const
 {
     for(int i = 2; i < num; i++)
         if(num % i == 0)
@@ -31,19 +37,22 @@ int RSA::make_positive(int num, int mod)
 
 void RSA::calculate_e()
 {   
-    while(e < phi)
-    {
-        if(euclidean(e, phi) == 1 && e > 1)
-            break;
 
-        e++;
+    srand((unsigned int)time(NULL));
+
+    while(true)
+    {
+        e = rand() % phi;
+        
+        if(euclidean(e, phi) == 1 && euclidean(e, n) == 1 && e > 1)
+            break;
     }
 }
 
 void RSA::calculate_d()
 {
     int x = 0;
-    extended_euclidean(phi, n, x, d);
+    extended_euclidean(phi, e, x, d);
     d = d < 0 ? make_positive(d, this->phi) : d;
 }
 
@@ -76,19 +85,17 @@ void RSA::gen_keys()
     gen_private_key();
 }
 
-int RSA::encrypt(int message)
+double RSA::encrypt(int message)
 {   
-    gen_keys();
+    std::cout << "N: " << n << std::endl;
     std::cout << "Phi: " << phi << std::endl;
-    std::cout << "Public key e: " << public_key->e << " Public key n: " << public_key->n << std::endl;
-    std::cout << "Private key d: " << private_key->d << " Private key n: " << private_key->n << std::endl;
-    int c = pow(message, public_key->e);
-
-    return c % public_key->n;
+    std::cout << "Public key e: " << public_key->e << std::endl;
+    std::cout << "Private key d: " << private_key->d << std::endl;
+    
+    return fmod((pow(message, public_key->e)), public_key->n);
 }
 
-int RSA::decrypt(int message)
+double RSA::decrypt(int message)
 {
-    int m = pow(message, private_key->d);
-    return m % private_key->n;
+    return fmod((pow(message, private_key->d)), private_key->n);
 }
