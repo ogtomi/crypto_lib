@@ -30,20 +30,20 @@ private:
 
 public:
     RSA(int p, int q);
-    ~RSA(){};
+    ~RSA();
 
-    int encrypt(int message);
-    int decrypt(int message);
+    void gen_keys();
+    double encrypt(int message);
+    double decrypt(int message);
 
 private:
-    bool is_prime(int num);
+    bool is_prime(int num) const;
     int make_positive(int num, int mod);
     void calculate_e();
     void calculate_d();
     void set_params();
     void gen_public_key();
     void gen_private_key();
-    void gen_keys();
 };
 
 #endif
