@@ -1,6 +1,6 @@
 #include "euclidean.h"
 
-int Euclidean::euclidean(int a, int b)
+long long int Euclidean::euclidean(long long int a, long long int b)
 {
     if(b == 0)
         return a;
@@ -8,7 +8,7 @@ int Euclidean::euclidean(int a, int b)
     return euclidean(b, a % b);
 }
 
-int Euclidean::extended_euclidean(int a, int b, int &x, int &y)
+long long int Euclidean::extended_euclidean(long long int a, long long int b, long long int &x, long long int &y)
 {
     if(b == 0)
     {
@@ -18,8 +18,8 @@ int Euclidean::extended_euclidean(int a, int b, int &x, int &y)
         return a;
     }
 
-    int x1, y1;
-    int gcd = extended_euclidean(b, a % b, x1, y1);
+    long long int x1, y1;
+    long long int gcd = extended_euclidean(b, a % b, x1, y1);
     x = y1;
     y = x1 - (a / b) * y1;
     

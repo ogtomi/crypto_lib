@@ -3,7 +3,7 @@
 #include <cmath>
 #include "rsa.h"
 
-RSA::RSA(int p, int q)
+RSA::RSA(long long int p, long long int q)
     :p(p), q(q), phi(0), n(0), e(0), d(0), public_key(nullptr), private_key(nullptr)
 {
 }
@@ -14,7 +14,7 @@ RSA::~RSA()
     delete private_key;
 }
 
-bool RSA::is_prime(int num) const
+bool RSA::is_prime(long long int num) const
 {
     for(int i = 2; i < num; i++)
         if(num % i == 0)
@@ -23,9 +23,9 @@ bool RSA::is_prime(int num) const
     return true;
 }
 
-int RSA::make_positive(int num, int mod)
+long long int RSA::make_positive(long long int num, long long int mod)
 {
-    int tmp = num;
+    long long int tmp = num;
 
     while(tmp < 0)
     {
@@ -51,9 +51,9 @@ void RSA::calculate_e()
 
 void RSA::calculate_d()
 {
-    int x = 0;
+    long long int x = 0;
     extended_euclidean(phi, e, x, d);
-    d = d < 0 ? make_positive(d, this->phi) : d;
+    d = d < 0 ? make_positive(d, phi) : d;
 }
 
 void RSA::set_params()

@@ -3,13 +3,13 @@
 
 int main()
 {
-    int p = 2;
-    int q = 7;
+    long long int p = 3;
+    long long int q = 5;
 
     RSA rsa(p, q);
     rsa.gen_keys();
 
-    int message = 14;
+    int message = 8;
     
     double encrypted_message = rsa.encrypt(message);
     double decrypted_message = rsa.decrypt(encrypted_message);

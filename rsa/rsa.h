@@ -5,31 +5,31 @@
 
 struct PublicKey
 {
-    int e;
-    int n;
+    long long int e;
+    long long int n;
 };
 
 struct PrivateKey
 {
-    int d;
-    int n;
+    long long int d;
+    long long int n;
 };
 
 class RSA : Euclidean
 {
 private:
-    int p;
-    int q;
-    int phi;
-    int n;
-    int e;
-    int d;
+    long long int p;
+    long long int q;
+    long long int phi;
+    long long int n;
+    long long int e;
+    long long int d;
 
     PublicKey* public_key;
     PrivateKey* private_key;
 
 public:
-    RSA(int p, int q);
+    RSA(long long int p, long long int q);
     ~RSA();
 
     void gen_keys();
@@ -37,8 +37,8 @@ public:
     double decrypt(int message);
 
 private:
-    bool is_prime(int num) const;
-    int make_positive(int num, int mod);
+    bool is_prime(long long int num) const;
+    long long int make_positive(long long int num, long long int mod);
     void calculate_e();
     void calculate_d();
     void set_params();

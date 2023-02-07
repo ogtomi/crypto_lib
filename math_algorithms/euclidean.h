@@ -6,8 +6,8 @@ class Euclidean
 public:
     Euclidean() = default;
     ~Euclidean(){};
-    int euclidean(int a, int b);
-    int extended_euclidean(int a, int b, int &x, int &y);
+    long long int euclidean(long long int a, long long int b);
+    long long int extended_euclidean(long long int a, long long int b, long long int &x, long long int &y);
 };
 
 #endif
