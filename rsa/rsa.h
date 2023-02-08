@@ -18,11 +18,11 @@ struct PrivateKey
 class RSA : Euclidean
 {
 private:
+    const long long int e = 3;
     long long int p;
     long long int q;
     long long int phi;
     long long int n;
-    long long int e = 3;
     long long int d;
 
     PublicKey* public_key;
@@ -39,7 +39,7 @@ public:
 private:
     bool is_prime(long long int num) const;
     long long int make_positive(long long int num, long long int mod);
-    void generate_pq();
+    void set_params();
     void calculate_d();
     void gen_public_key();
     void gen_private_key();
