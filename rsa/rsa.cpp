@@ -3,8 +3,8 @@
 #include <cmath>
 #include "rsa.h"
 
-RSA::RSA(long long int p, long long int q)
-    :p(p), q(q), phi(0), n(0), e(0), d(0), public_key(nullptr), private_key(nullptr)
+RSA::RSA()
+    :p(0), q(0), phi(0), n(0), d(0), public_key(nullptr), private_key(nullptr)
 {
 }
 
@@ -35,17 +35,30 @@ long long int RSA::make_positive(long long int num, long long int mod)
     return tmp;
 }
 
-void RSA::calculate_e()
-{   
-
-    srand((unsigned int)time(NULL));
+void RSA::generate_pq()
+{
+    srand((unsigned)time(NULL));
 
     while(true)
     {
-        e = rand() % phi;
-        
-        if(euclidean(e, phi) == 1 && euclidean(e, n) == 1 && e > 1)
+        p = rand() % 19 + 2;
+        q = rand() % 19 + 2;
+        phi = (p - 1) * (q - 1);
+
+        if(is_prime(p) && is_prime(q) && euclidean(e, phi) == 1 && p != q)
+        {
+            if(p > q)
+            {
+                long long int tmp;
+
+                tmp = p;
+                p = q;
+                q = tmp;
+            }
+
+            n = p * q;
             break;
+        }    
     }
 }
 
@@ -54,18 +67,6 @@ void RSA::calculate_d()
     long long int x = 0;
     extended_euclidean(phi, e, x, d);
     d = d < 0 ? make_positive(d, phi) : d;
-}
-
-void RSA::set_params()
-{
-    if(is_prime(p) && is_prime(q))
-    {
-        n = p * q;
-        phi = (p - 1) * (q - 1);
-    }
-
-    calculate_e();
-    calculate_d();
 }
 
 void RSA::gen_public_key()
@@ -79,19 +80,15 @@ void RSA::gen_private_key()
 }
 
 void RSA::gen_keys()
-{
-    set_params();
+{   
+    generate_pq();
+    calculate_d();
     gen_public_key();
     gen_private_key();
 }
 
 double RSA::encrypt(int message)
 {   
-    std::cout << "N: " << n << std::endl;
-    std::cout << "Phi: " << phi << std::endl;
-    std::cout << "Public key e: " << public_key->e << std::endl;
-    std::cout << "Private key d: " << private_key->d << std::endl;
-    
     return fmod((pow(message, public_key->e)), public_key->n);
 }
 
