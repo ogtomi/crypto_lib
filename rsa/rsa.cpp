@@ -16,7 +16,7 @@ RSA::~RSA()
 
 bool RSA::is_prime(long long int num) const
 {
-    for(int i = 2; i < num; i++)
+    for(long long int i = 2; i < num; i++)
         if(num % i == 0)
             return false;
     
@@ -35,7 +35,7 @@ long long int RSA::make_positive(long long int num, long long int mod)
     return tmp;
 }
 
-void RSA::generate_pq()
+void RSA::set_params()
 {
     srand((unsigned)time(NULL));
 
@@ -81,7 +81,7 @@ void RSA::gen_private_key()
 
 void RSA::gen_keys()
 {   
-    generate_pq();
+    set_params();
     calculate_d();
     gen_public_key();
     gen_private_key();
