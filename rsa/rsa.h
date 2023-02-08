@@ -29,7 +29,7 @@ private:
     PrivateKey* private_key;
 
 public:
-    RSA() = default;
+    RSA();
     ~RSA();
 
     void gen_keys();
