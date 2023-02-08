@@ -22,14 +22,14 @@ private:
     long long int q;
     long long int phi;
     long long int n;
-    long long int e;
+    long long int e = 3;
     long long int d;
 
     PublicKey* public_key;
     PrivateKey* private_key;
 
 public:
-    RSA(long long int p, long long int q);
+    RSA() = default;
     ~RSA();
 
     void gen_keys();
@@ -39,9 +39,8 @@ public:
 private:
     bool is_prime(long long int num) const;
     long long int make_positive(long long int num, long long int mod);
-    void calculate_e();
+    void generate_pq();
     void calculate_d();
-    void set_params();
     void gen_public_key();
     void gen_private_key();
 };
