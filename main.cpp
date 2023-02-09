@@ -6,10 +6,12 @@ int main()
     RSA rsa;
     rsa.gen_keys();
 
-    int message = 5;
-    
-    double encrypted_message = rsa.encrypt(message);
-    double decrypted_message = rsa.decrypt(encrypted_message);
+    mpz_class message = 120;
+    mpz_class encrypted_message;
+    mpz_class decrypted_message;
+
+    rsa.encrypt(encrypted_message, message);
+    rsa.decrypt(decrypted_message, encrypted_message);
 
     std::cout << "____________________" << std::endl;
     std::cout << "Plain message: " << message << std::endl;
