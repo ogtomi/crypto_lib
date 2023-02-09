@@ -1,13 +1,16 @@
 #ifndef _EUCLIDEAN_H_
 #define _EUCLIDEAN_H_
 
+#include <gmp.h>
+#include <gmpxx.h>
+
 class Euclidean
 {
 public:
     Euclidean() = default;
     ~Euclidean(){};
-    long long int euclidean(long long int a, long long int b);
-    long long int extended_euclidean(long long int a, long long int b, long long int &x, long long int &y);
+    mpz_class euclidean(mpz_class a, mpz_class b);
+    mpz_class extended_euclidean(mpz_class a, mpz_class b, mpz_class &x, mpz_class &y);
 };
 
 #endif
