@@ -1,29 +1,31 @@
 #ifndef _RSA_H_
 #define _RSA_H_
 
+#include <gmp.h>
+#include <gmpxx.h>
 #include "../math_algorithms/euclidean.h"
 
 struct PublicKey
 {
-    long long int e;
-    long long int n;
+    mpz_class e;
+    mpz_class n;
 };
 
 struct PrivateKey
 {
-    long long int d;
-    long long int n;
+    mpz_class d;
+    mpz_class n;
 };
 
 class RSA : Euclidean
 {
 private:
-    const long long int e = 3;
-    long long int p;
-    long long int q;
-    long long int phi;
-    long long int n;
-    long long int d;
+    const mpz_class e = 3;
+    mpz_class p;
+    mpz_class q;
+    mpz_class phi;
+    mpz_class n;
+    mpz_class d;
 
     PublicKey* public_key;
     PrivateKey* private_key;
@@ -33,12 +35,12 @@ public:
     ~RSA();
 
     void gen_keys();
-    double encrypt(int message);
-    double decrypt(int message);
+    void encrypt(mpz_class &enrypted_message, mpz_class message);
+    void decrypt(mpz_class &decrypted_message, mpz_class message);
 
 private:
-    bool is_prime(long long int num) const;
-    long long int make_positive(long long int num, long long int mod);
+    bool is_prime(mpz_class num) const;
+    mpz_class make_positive(mpz_class num, mpz_class mod);
     void set_params();
     void calculate_d();
     void gen_public_key();
