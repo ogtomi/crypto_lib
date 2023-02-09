@@ -14,18 +14,18 @@ RSA::~RSA()
     delete private_key;
 }
 
-bool RSA::is_prime(long long int num) const
+bool RSA::is_prime(mpz_class num) const
 {
-    for(long long int i = 2; i < num; i++)
+    for(mpz_class i = 2; i < num; i++)
         if(num % i == 0)
             return false;
     
     return true;
 }
 
-long long int RSA::make_positive(long long int num, long long int mod)
+mpz_class RSA::make_positive(mpz_class num, mpz_class mod)
 {
-    long long int tmp = num;
+    mpz_class tmp = num;
 
     while(tmp < 0)
     {
@@ -41,15 +41,15 @@ void RSA::set_params()
 
     while(true)
     {
-        p = rand() % 19 + 2;
-        q = rand() % 19 + 2;
+        p = rand() % 100 + 3;
+        q = rand() % 100 + 3;
         phi = (p - 1) * (q - 1);
-
+        
         if(is_prime(p) && is_prime(q) && euclidean(e, phi) == 1 && p != q)
         {
             if(p > q)
             {
-                long long int tmp;
+                mpz_class tmp;
 
                 tmp = p;
                 p = q;
@@ -64,7 +64,7 @@ void RSA::set_params()
 
 void RSA::calculate_d()
 {
-    long long int x = 0;
+    mpz_class x = 0;
     extended_euclidean(phi, e, x, d);
     d = d < 0 ? make_positive(d, phi) : d;
 }
@@ -87,12 +87,12 @@ void RSA::gen_keys()
     gen_private_key();
 }
 
-double RSA::encrypt(int message)
+void RSA::encrypt(mpz_class &encrypted_message, mpz_class message)
 {   
-    return fmod((pow(message, public_key->e)), public_key->n);
+    mpz_powm_sec(encrypted_message.get_mpz_t(), message.get_mpz_t(), public_key->e.get_mpz_t(), public_key->n.get_mpz_t());
 }
 
-double RSA::decrypt(int message)
-{
-    return fmod((pow(message, private_key->d)), private_key->n);
+void RSA::decrypt(mpz_class &decrypted_message, mpz_class message)
+{   
+    mpz_powm_sec(decrypted_message.get_mpz_t(), message.get_mpz_t(), private_key->d.get_mpz_t(), private_key->n.get_mpz_t());
 }
