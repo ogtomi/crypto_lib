@@ -1,6 +1,6 @@
 #include "euclidean.h"
 
-long long int Euclidean::euclidean(long long int a, long long int b)
+mpz_class Euclidean::euclidean(mpz_class a, mpz_class b)
 {
     if(b == 0)
         return a;
@@ -8,7 +8,7 @@ long long int Euclidean::euclidean(long long int a, long long int b)
     return euclidean(b, a % b);
 }
 
-long long int Euclidean::extended_euclidean(long long int a, long long int b, long long int &x, long long int &y)
+mpz_class Euclidean::extended_euclidean(mpz_class a, mpz_class b, mpz_class &x, mpz_class &y)
 {
     if(b == 0)
     {
@@ -18,8 +18,8 @@ long long int Euclidean::extended_euclidean(long long int a, long long int b, lo
         return a;
     }
 
-    long long int x1, y1;
-    long long int gcd = extended_euclidean(b, a % b, x1, y1);
+    mpz_class x1, y1;
+    mpz_class gcd = extended_euclidean(b, a % b, x1, y1);
     x = y1;
     y = x1 - (a / b) * y1;
     
