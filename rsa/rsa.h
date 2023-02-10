@@ -20,7 +20,8 @@ struct PrivateKey
 class RSA : Euclidean
 {
 private:
-    const mpz_class e = 3;
+    const int key_size = 16;
+    const mpz_class e = 65537;
     mpz_class p;
     mpz_class q;
     mpz_class phi;
