@@ -37,14 +37,17 @@ mpz_class RSA::make_positive(mpz_class num, mpz_class mod)
 
 void RSA::set_params()
 {
-    srand((unsigned)time(NULL));
+    gmp_randstate_t state;
+    gmp_randinit_mt(state);
+    gmp_randseed_ui(state, time(NULL));
 
     while(true)
     {
-        p = rand() % 100 + 3;
-        q = rand() % 100 + 3;
+        mpz_urandomb(this->p.get_mpz_t(), state, key_size);
+        mpz_urandomb(this->q.get_mpz_t(), state, key_size);
+
         phi = (p - 1) * (q - 1);
-        
+
         if(is_prime(p) && is_prime(q) && euclidean(e, phi) == 1 && p != q)
         {
             if(p > q)
