@@ -20,7 +20,7 @@ public:
 private:
     void to_binary(const std::string &str);
     void pad();
-    uint8_t get_m_size();
+    uint64_t get_m_size();
 };
 
 #endif
