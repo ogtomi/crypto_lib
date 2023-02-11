@@ -28,9 +28,23 @@ void SHA256::pad()
         m_data[i] = 0x00;
         i++;
     }
+
+    uint64_t m_size = get_m_size();
+
+    // Setting length bytes
+    m_data[63] = m_size;
+    m_data[62] = m_size >> 8;
+    m_data[61] = m_size >> 16;
+    m_data[60] = m_size >> 24;
+    m_data[59] = m_size >> 32;
+    m_data[58] = m_size >> 40;
+    m_data[57] = m_size >> 48;
+    m_data[56] = m_size >> 56;
+
+    std::cout << int(m_size >> 32) << std::endl;
 }
 
-uint8_t SHA256::get_m_size()
+uint64_t SHA256::get_m_size()
 {
     return m_len * byte_size;
 }
