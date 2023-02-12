@@ -10,12 +10,13 @@ class SHA256
 private:
     const uint8_t byte_size = 8;
     std::bitset<8> m_data[64];
+	std::bitset<32> hash_val[8];
     uint64_t m_len;
 
 public:
     SHA256();
     ~SHA256() {};
-    void run_testing();
+	std::string get_hash_str(std::string input_str);
 
 private:
     void to_binary(const std::string &str);
@@ -28,11 +29,6 @@ private:
 	std::bitset<32> sig1(std::bitset<32> w);
 	std::bitset<32> choose(std::bitset<32> e, std::bitset<32> f, std::bitset<32> g);
 	std::bitset<32> majority(std::bitset<32> a, std::bitset<32> b, std::bitset<32> c);
-	
-    uint32_t hash_val[8] = {
-        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
-    };
 
 	static constexpr std::bitset<32> K[64] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
