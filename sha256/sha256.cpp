@@ -40,8 +40,22 @@ void SHA256::pad()
     m_data[58] = m_size >> 40;
     m_data[57] = m_size >> 48;
     m_data[56] = m_size >> 56;
+}
 
-    std::cout << int(m_size >> 32) << std::endl;
+void SHA256::transform()
+{
+    std::bitset<32> m[64];
+
+    for(uint8_t i = 0, j = 0; i < 16; i++, j += 4)
+    {
+        m[i] = (m_data[j].to_ulong() << 24 | (m_data[j + 1].to_ulong() << 16) | (m_data[j + 2].to_ulong() << 8) | m_data[j + 3].to_ulong());
+        std::cout << m[i] << std::endl;
+    }
+
+    for(uint8_t i = 16; i < 64 ; i++)
+    {
+        m[i] = 0x00000000;
+    }
 }
 
 uint64_t SHA256::get_m_size()
@@ -54,7 +68,8 @@ void SHA256::run_testing()
     std::string str{"Hello world"};
     to_binary(str);
     pad();
-    
+    transform();
+
     for(std::bitset<8> &byte: m_data)
     {
         std::cout << byte << std::endl;
