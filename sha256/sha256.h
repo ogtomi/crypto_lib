@@ -20,6 +20,7 @@ public:
 private:
     void to_binary(const std::string &str);
     void pad();
+	void transform();
     uint64_t get_m_size();
 
     uint32_t hash_val[8] = {
