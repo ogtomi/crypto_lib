@@ -23,6 +23,10 @@ private:
 	void transform();
     uint64_t get_m_size();
 
+	std::bitset<32> rotate_r(std::bitset<32> w, uint32_t n);
+	std::bitset<32> sig0(std::bitset<32> w);
+	std::bitset<32> sig1(std::bitset<32> w);
+
     uint32_t hash_val[8] = {
         0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
         0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
