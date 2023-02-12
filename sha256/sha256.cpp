@@ -45,6 +45,12 @@ void SHA256::pad()
 void SHA256::transform()
 {
     std::bitset<32> m[64];
+    std::bitset<32> state[8];
+
+    for(uint8_t i = 0; i < 8 ; i++)
+    {
+        state[i] = hash_val[i];
+    }
 
     for(uint8_t i = 0, j = 0; i < 16; i++, j += 4)
     {
@@ -75,6 +81,16 @@ std::bitset<32> SHA256::sig0(std::bitset<32> w)
 std::bitset<32> SHA256::sig1(std::bitset<32> w)
 {
     return (rotate_r(w, 17) ^ rotate_r(w, 19) ^ (w >> 10));
+}
+
+std::bitset<32> SHA256::choose(std::bitset<32> e, std::bitset<32> f, std::bitset<32> g)
+{
+    return (e & f) ^ (~e & g);
+}
+
+std::bitset<32> SHA256::majority(std::bitset<32> a, std::bitset<32> b, std::bitset<32> c)
+{
+    return (a & (b | c)) | (b & c);
 }
 
 void SHA256::run_testing()
