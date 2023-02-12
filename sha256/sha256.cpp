@@ -1,10 +1,19 @@
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include "sha256.h"
 
 SHA256::SHA256()
     : m_len(0)
 {
-
+    hash_val[0] = 0x6a09e667;
+    hash_val[1] = 0xbb67ae85;
+    hash_val[2] = 0x3c6ef372;
+    hash_val[3] = 0xa54ff53a;
+    hash_val[4] = 0x510e527f;
+    hash_val[5] = 0x9b05688c;
+    hash_val[6] = 0x1f83d9ab;
+    hash_val[7] = 0x5be0cd19;
 }
 
 void SHA256::to_binary(const std::string &str)
@@ -46,6 +55,7 @@ void SHA256::transform()
 {
     std::bitset<32> m[64];
     std::bitset<32> state[8];
+    std::bitset<32> maj, ch, t1, t2, sig_a, sig_e;
 
     for(uint8_t i = 0; i < 8 ; i++)
     {
@@ -60,6 +70,32 @@ void SHA256::transform()
     for(uint8_t i = 16; i < 64 ; i++)
     {
         m[i] = sig1(m[i - 2]).to_ulong() + m[i - 7].to_ulong() + sig0(m[i - 15]).to_ulong() + m[i - 16].to_ulong();
+    }
+
+    for(uint8_t i = 0; i < 64; i++)
+    {
+        maj = majority(state[0], state[1], state[2]);
+        ch = choose(state[4], state[5], state[6]);
+
+        sig_a = rotate_r(state[0], 2) ^ rotate_r(state[0], 13) ^ rotate_r(state[0], 22);
+        sig_e = rotate_r(state[4], 6) ^ rotate_r(state[4], 11) ^ rotate_r(state[4], 25);
+
+        t1 = state[7].to_ulong() + sig_e.to_ulong() + ch.to_ulong() + K[i].to_ulong() + m[i].to_ulong();
+        t2 = sig_a.to_ulong() + maj.to_ulong();
+
+        state[7] = state[6];
+        state[6] = state[5];
+        state[5] = state[4];
+        state[4] = state[3].to_ulong() + t1.to_ulong();
+        state[3] = state[2];
+        state[2] = state[1];
+        state[1] = state[0];
+        state[0] = t1.to_ulong() + t2.to_ulong();
+    }
+
+    for(uint8_t i = 0; i < 8; i++)
+    {
+        hash_val[i] = hash_val[i].to_ulong() + state[i].to_ulong();
     }
 }
 
@@ -93,15 +129,21 @@ std::bitset<32> SHA256::majority(std::bitset<32> a, std::bitset<32> b, std::bits
     return (a & (b | c)) | (b & c);
 }
 
-void SHA256::run_testing()
+std::string SHA256::get_hash_str(std::string input_str)
 {
-    std::string str{"Hello world"};
-    to_binary(str);
+    std::stringstream ss;
+    ss << std::setfill('0') <<std::hex;
+
+    to_binary(input_str);
     pad();
     transform();
 
-    for(std::bitset<8> &byte: m_data)
-    {
-        //std::cout << byte << std::endl;
+    for(auto const &w: hash_val)
+    {   
+        ss << std::setw(8) << w.to_ulong();
     }
+
+    std::string hash_str(ss.str());
+    
+    return hash_str;
 }
