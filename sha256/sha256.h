@@ -26,13 +26,15 @@ private:
 	std::bitset<32> rotate_r(std::bitset<32> w, uint32_t n);
 	std::bitset<32> sig0(std::bitset<32> w);
 	std::bitset<32> sig1(std::bitset<32> w);
-
+	std::bitset<32> choose(std::bitset<32> e, std::bitset<32> f, std::bitset<32> g);
+	std::bitset<32> majority(std::bitset<32> a, std::bitset<32> b, std::bitset<32> c);
+	
     uint32_t hash_val[8] = {
         0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
         0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
     };
 
-	static constexpr uint32_t K[64] = {
+	static constexpr std::bitset<32> K[64] = {
 		0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5,
 		0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
 		0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3,
