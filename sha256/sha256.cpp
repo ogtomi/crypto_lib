@@ -49,18 +49,32 @@ void SHA256::transform()
     for(uint8_t i = 0, j = 0; i < 16; i++, j += 4)
     {
         m[i] = (m_data[j].to_ulong() << 24 | (m_data[j + 1].to_ulong() << 16) | (m_data[j + 2].to_ulong() << 8) | m_data[j + 3].to_ulong());
-        std::cout << m[i] << std::endl;
     }
 
     for(uint8_t i = 16; i < 64 ; i++)
     {
-        m[i] = 0x00000000;
+        m[i] = sig1(m[i - 2]).to_ulong() + m[i - 7].to_ulong() + sig0(m[i - 15]).to_ulong() + m[i - 16].to_ulong();
     }
 }
 
 uint64_t SHA256::get_m_size()
 {
     return m_len * byte_size;
+}
+
+std::bitset<32> SHA256::rotate_r(std::bitset<32> w, uint32_t n)
+{
+    return ((w >> n)  | (w  << (32 - n)));
+}
+
+std::bitset<32> SHA256::sig0(std::bitset<32> w)
+{
+    return (rotate_r(w, 7) ^ rotate_r(w, 18) ^ (w >> 3));
+}
+
+std::bitset<32> SHA256::sig1(std::bitset<32> w)
+{
+    return (rotate_r(w, 17) ^ rotate_r(w, 19) ^ (w >> 10));
 }
 
 void SHA256::run_testing()
@@ -72,6 +86,6 @@ void SHA256::run_testing()
 
     for(std::bitset<8> &byte: m_data)
     {
-        std::cout << byte << std::endl;
+        //std::cout << byte << std::endl;
     }
 }
