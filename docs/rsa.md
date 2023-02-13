@@ -19,7 +19,7 @@ RSA is a public-key algorithm for encrypting and signing messages. It uses the r
 
 4. Calculate:
 
-    $ ed = 1 (mod phi(n)) $
+    $ ed = 1 (mod (phi(n))) $
     > NOTE: `d` is calculated using extended euclidean algorithm
 5. Bundle the keys:
 - private key = (`d`,`n`)
