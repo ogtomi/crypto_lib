@@ -43,3 +43,8 @@ This algorithm is an afficient method for computing the greatest common divisor 
 This algorithm is an extension to the euclidean algorithm. It computes integers `x` and `y` such that:
 
 $ ax + by = gcd(a, b)$
+
+## Used libraries
+
+### GMP
+`The GNU Multiple Precision Arithmetic Library` is a free library for arbitrary precision arithmetic, operating on signed integers, rational numbers, and floating-point numbers. There is no practical limit to the precision except the ones implied by the available memory in the machine GMP runs on.
