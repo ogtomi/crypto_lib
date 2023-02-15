@@ -4,7 +4,7 @@
 #include "sha256.h"
 
 SHA256::SHA256()
-    : m_len(0)
+    : block_len(0)
 {
     hash_val[0] = 0x6a09e667;
     hash_val[1] = 0xbb67ae85;
@@ -18,16 +18,30 @@ SHA256::SHA256()
 
 void SHA256::to_binary(const std::string &str)
 {
+    m_size = str.size() * 8;
+
     for(size_t i = 0; i < str.size(); i++)
-    {
-        m_data[i] = str[i];
-        m_len++;
+    {   
+        m_data[block_len] = str[i];
+        block_len++;
+        
+        if(block_len == 64)
+        {
+            transform();
+            block_len = 0;
+        }
+
+        if(i == str.size() - 1)
+        {
+            pad();
+            transform();
+        }
     }
 }
 
 void SHA256::pad()
 {
-    uint8_t i = m_len;
+    uint8_t i = block_len;
     uint8_t end = 56;
 
     m_data[i++] = 0x80;
@@ -37,8 +51,6 @@ void SHA256::pad()
         m_data[i] = 0x00;
         i++;
     }
-
-    uint64_t m_size = get_m_size();
 
     // Setting length bytes
     m_data[63] = m_size;
@@ -99,11 +111,6 @@ void SHA256::transform()
     }
 }
 
-uint64_t SHA256::get_m_size()
-{
-    return m_len * byte_size;
-}
-
 std::bitset<32> SHA256::rotate_r(std::bitset<32> w, uint32_t n)
 {
     return ((w >> n)  | (w  << (32 - n)));
@@ -129,14 +136,14 @@ std::bitset<32> SHA256::majority(std::bitset<32> a, std::bitset<32> b, std::bits
     return (a & (b | c)) | (b & c);
 }
 
-std::string SHA256::get_hash_str(std::string input_str)
+std::string SHA256::digest(std::string input_str)
 {
     std::stringstream ss;
     ss << std::setfill('0') <<std::hex;
 
     to_binary(input_str);
-    pad();
-    transform();
+    //pad();
+    //transform();
 
     for(auto const &w: hash_val)
     {   
