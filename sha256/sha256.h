@@ -11,18 +11,18 @@ private:
     const uint8_t byte_size = 8;
     std::bitset<8> m_data[64];
 	std::bitset<32> hash_val[8];
-    uint64_t m_len;
+    uint64_t block_len;
+	uint64_t m_size;
 
 public:
     SHA256();
     ~SHA256() {};
-	std::string get_hash_str(std::string input_str);
+	std::string digest(std::string input_str);
 
 private:
     void to_binary(const std::string &str);
     void pad();
 	void transform();
-    uint64_t get_m_size();
 
 	std::bitset<32> rotate_r(std::bitset<32> w, uint32_t n);
 	std::bitset<32> sig0(std::bitset<32> w);
