@@ -1,7 +1,7 @@
 #include "des.h"
 #include <iostream>
 
-void DES::to_binary(const std::string str)
+void DES::to_binary(const std::string &str)
 {
     uint8_t m_len = 0;
     uint64_t value;
@@ -16,11 +16,6 @@ void DES::to_binary(const std::string str)
         m_data[m_len++] = value >> 1;
         m_data[m_len++] = value;
     }
-
-    for(auto const &bit: m_data)
-    {
-        std::cout << bit;
-    }
 }
 
 void DES::permute()
@@ -32,7 +27,7 @@ void DES::permute()
     }
 }
 
-void DES::run_testing(std::string key)
+void DES::run_testing(const std::string &key)
 {
     to_binary(key);
     for(auto const &bit: m_data)
@@ -41,5 +36,8 @@ void DES::run_testing(std::string key)
     }
     std::cout << "\n";
     permute();
-    std::cout << perm_key << std::endl;
+    for(auto const &bit: perm_key)
+    {
+        std::cout << bit;
+    }
 }
