@@ -8,9 +8,13 @@ class DES
 {
 private:
     std::bitset<1> m_data[64];
+    std::bitset<1> right_half_message[32];
+    std::bitset<1> left_half_message[32];
     std::bitset<1> perm_key[56];
     std::bitset<1> right_half_key[28];
     std::bitset<1> left_half_key[28];
+    
+    uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
     const uint8_t pc_1[56] = { 57, 49, 41, 33, 25, 17, 9,
                                 1, 58, 50, 42, 34, 26, 18,
@@ -37,6 +41,9 @@ private:
     void to_binary(const std::string &str);
     void permute();
     void split_key();
+    void split_message();
+    void rotate(int n);
+    void generate_keys();
 };
 
 #endif
