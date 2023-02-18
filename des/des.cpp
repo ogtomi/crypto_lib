@@ -23,21 +23,21 @@ void DES::permute()
     for(int i = 0; i < 56; i++)
     {
         perm_key[i] = m_data[pc_1[i] - 1];
-        //std::cout << perm_key[i] << std::endl;
+    }
+}
+
+void DES::split_key()
+{      
+    for(size_t i = 0; i < 28; i++)
+    {
+        right_half_key[i] = perm_key[i + 28];
+        left_half_key[i] = perm_key[i];
     }
 }
 
 void DES::run_testing(const std::string &key)
 {
     to_binary(key);
-    for(auto const &bit: m_data)
-    {
-        std::cout << bit;
-    }
-    std::cout << "\n";
     permute();
-    for(auto const &bit: perm_key)
-    {
-        std::cout << bit;
-    }
+    split_key();
 }
