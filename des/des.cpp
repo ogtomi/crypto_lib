@@ -35,9 +35,56 @@ void DES::split_key()
     }
 }
 
+void DES::split_message()
+{
+    for(size_t i = 0; i < 32; i++)
+    {
+        right_half_message[i] = m_data[i + 32];
+        left_half_message[i] = m_data[i];
+    }
+}
+
+void DES::rotate(int n)
+{
+    std::bitset<1> temp_right[28];
+    std::bitset<1> temp_left[28];
+    int k = 0;
+
+    for(int i = n; i < 28; i++)
+    {
+        temp_right[k] = right_half_key[i];
+        temp_left[k] = left_half_key[i];
+        k++;
+    }
+
+    for(int i = 0; i < n; i++)
+    {
+        temp_right[k] = right_half_key[i];
+        temp_left[k] = left_half_key[i];
+        k++;
+    }
+
+    for(int i = 0; i < 28; i++)
+    {
+        right_half_key[i] = temp_right[i];
+        left_half_key[i] = temp_left[i];
+    }
+}
+
+void DES::generate_keys()
+{
+    for(size_t i = 0; i < 16; i++)
+    {
+        rotate(no_shifts[i]);
+    }
+}
+
 void DES::run_testing(const std::string &key)
 {
+    split_message();
     to_binary(key);
     permute();
     split_key();
+
+    generate_keys();
 }
