@@ -29,10 +29,10 @@ private:
                                 46, 42, 50, 36, 29, 32 };
 
 public: 
-    void run_testing(const std::string key);
+    void run_testing(const std::string &key);
 
 private:
-    void to_binary(std::string str);
+    void to_binary(const std::string &str);
     void permute();
 };
 
