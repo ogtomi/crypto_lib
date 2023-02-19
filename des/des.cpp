@@ -1,7 +1,24 @@
 #include "des.h"
 #include <iostream>
 
-void DES::to_binary(const std::string &str)
+void DES::to_binary_key(const std::string &str)
+{
+    uint8_t k_len = 0;
+    uint64_t value;
+
+    for(size_t i = 0; i < str.size(); i++)
+    {   
+        std::string str_i(&str[i], 1);
+        value = std::stoi(str_i, nullptr, 16);
+
+        k_data[k_len++] = value >> 3;
+        k_data[k_len++] = value >> 2;
+        k_data[k_len++] = value >> 1;
+        k_data[k_len++] = value;
+    }
+}
+
+void DES::to_binary_message(const std::string &str)
 {
     uint8_t m_len = 0;
     uint64_t value;
@@ -22,7 +39,7 @@ void DES::permute_pc1()
 {
     for(int i = 0; i < 56; i++)
     {
-        perm_key[i] = m_data[pc_1[i] - 1];
+        perm_key[i] = k_data[pc_1[i] - 1];
     }
 }
 
@@ -34,6 +51,14 @@ void DES::permute_pc2()
         {
             perm_subkeys[i][j] = subkeys[i][pc_2[j] - 1];
         }
+    }
+}
+
+void DES::ip_message()
+{
+    for(int i = 0; i < 64; i++)
+    {
+        perm_message[i] = m_data[ip[i] - 1];
     }
 }
 
@@ -50,8 +75,8 @@ void DES::split_message()
 {
     for(size_t i = 0; i < 32; i++)
     {
-        right_half_message[i] = m_data[i + 32];
-        left_half_message[i] = m_data[i];
+        right_half_message[i] = perm_message[i + 32];
+        left_half_message[i] = perm_message[i];
     }
 }
 
@@ -102,21 +127,25 @@ void DES::generate_keys()
     }   
 }
 
-void DES::run_testing(const std::string &key)
+void DES::run_testing(const std::string &key, const std::string &message)
 {
-    split_message();
-    to_binary(key);
+    to_binary_key(key);
     permute_pc1();
     split_key();
     generate_keys();
     permute_pc2();
 
-    for(auto const &subkey: perm_subkeys)
+    to_binary_message(message);
+    ip_message();
+    split_message();
+
+    for(auto const& bit: m_data)
     {
-        for(auto const &bit: subkey)
-        {
-            std::cout << bit;
-        }
-        std::cout << "\n";
+        std::cout << bit;
+    }
+    std::cout << "\n";
+    for(auto const& bit: perm_message)
+    {
+        std::cout << bit;
     }
 }
