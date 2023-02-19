@@ -107,8 +107,12 @@ void DES::rotate(int n)
     }
 }
 
-void DES::generate_keys()
+void DES::generate_keys(const std::string &key)
 {
+    to_binary_key(key);
+    permute_pc1();
+    split_key();
+
     for(size_t i = 0; i < 16; i++)
     {
         rotate(no_shifts[i]);
@@ -124,20 +128,43 @@ void DES::generate_keys()
                 subkeys[i][j] = right_half_key[j - 28];
             }
         }
-    }   
+    } 
+    
+    permute_pc2();
+}
+
+void DES::encrypt(const std::string &message)
+{
+    to_binary_message(message);
+    ip_message();
+    split_message();
+
+    std::bitset<1> right_half_message_expanded[48];
+    std::bitset<1> xor_subkey[48];
+    std::bitset<2> row;
+    std::bitset<4> col;
+
+    for(int i = 0; i < 16; i++)
+    {
+        // Expansion
+        for(int j = 0; i < 48; i++)
+        {
+            right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
+        }
+
+        // XOR with subkey
+        for(int j = 0; j < 48; j++)
+        {
+            xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
+        }
+    }
 }
 
 void DES::run_testing(const std::string &key, const std::string &message)
 {
-    to_binary_key(key);
-    permute_pc1();
-    split_key();
-    generate_keys();
-    permute_pc2();
 
-    to_binary_message(message);
-    ip_message();
-    split_message();
+    generate_keys(key);
+    encrypt(message);
 
     for(auto const& bit: m_data)
     {
