@@ -141,20 +141,18 @@ void DES::encrypt(const std::string &message)
 
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
-    std::bitset<2> row;
-    std::bitset<4> col;
 
     for(int i = 0; i < 16; i++)
     {
         // Expansion
-        for(int j = 0; i < 48; i++)
+        for(int j = 0; j < 48; j++)
         {
             right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
         }
 
         // XOR with subkey
         for(int j = 0; j < 48; j++)
-        {
+        {   
             xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
         }
     }
@@ -162,17 +160,6 @@ void DES::encrypt(const std::string &message)
 
 void DES::run_testing(const std::string &key, const std::string &message)
 {
-
     generate_keys(key);
     encrypt(message);
-
-    for(auto const& bit: m_data)
-    {
-        std::cout << bit;
-    }
-    std::cout << "\n";
-    for(auto const& bit: perm_message)
-    {
-        std::cout << bit;
-    }
 }
