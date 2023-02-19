@@ -13,6 +13,8 @@ private:
     std::bitset<1> perm_key[56];
     std::bitset<1> right_half_key[28];
     std::bitset<1> left_half_key[28];
+    std::bitset<1> subkeys[16][56];
+    std::bitset<1> perm_subkeys[16][48];
     
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
@@ -39,7 +41,8 @@ public:
 
 private:
     void to_binary(const std::string &str);
-    void permute();
+    void permute_pc1();
+    void permute_pc2();
     void split_key();
     void split_message();
     void rotate(int n);
