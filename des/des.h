@@ -7,7 +7,9 @@
 class DES
 {
 private:
+    std::bitset<1> k_data[64];
     std::bitset<1> m_data[64];
+    std::bitset<1> perm_message[64];
     std::bitset<1> right_half_message[32];
     std::bitset<1> left_half_message[32];
     std::bitset<1> perm_key[56];
@@ -36,13 +38,24 @@ private:
                                 44, 49, 39, 56, 34, 53,
                                 46, 42, 50, 36, 29, 32 };
 
+    const uint8_t ip[64] = { 58, 50, 42, 34, 26, 18 ,10, 2,
+                            60, 52, 44, 36, 28, 20, 12, 4,
+                            62, 54, 46, 38, 30, 22, 14, 6,
+                            64, 56, 48, 40, 32, 24, 16, 8,
+                            57, 49, 41, 33, 25, 17, 9, 1,
+                            59, 51, 43, 35, 27, 19, 11, 3,
+                            61, 53, 45, 37, 29, 21, 13, 5,
+                            63, 55, 47, 39, 31, 23, 15, 7};
+
 public: 
-    void run_testing(const std::string &key);
+    void run_testing(const std::string &key, const std::string &message);
 
 private:
-    void to_binary(const std::string &str);
+    void to_binary_key(const std::string &str);
+    void to_binary_message(const std::string &str);
     void permute_pc1();
     void permute_pc2();
+    void ip_message();
     void split_key();
     void split_message();
     void rotate(int n);
