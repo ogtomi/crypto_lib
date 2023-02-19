@@ -18,11 +18,22 @@ void DES::to_binary(const std::string &str)
     }
 }
 
-void DES::permute()
+void DES::permute_pc1()
 {
     for(int i = 0; i < 56; i++)
     {
         perm_key[i] = m_data[pc_1[i] - 1];
+    }
+}
+
+void DES::permute_pc2()
+{
+    for(int i = 0; i < 16; i++)
+    {
+        for(int j = 0; j < 48; j++)
+        {
+            perm_subkeys[i][j] = subkeys[i][pc_2[j] - 1];
+        }
     }
 }
 
@@ -76,15 +87,36 @@ void DES::generate_keys()
     for(size_t i = 0; i < 16; i++)
     {
         rotate(no_shifts[i]);
-    }
+
+        for(size_t j = 0; j < 56; j++)
+        {   
+            if(j < 28)
+            {
+                subkeys[i][j] = left_half_key[j];
+            }
+            else
+            {
+                subkeys[i][j] = right_half_key[j - 28];
+            }
+        }
+    }   
 }
 
 void DES::run_testing(const std::string &key)
 {
     split_message();
     to_binary(key);
-    permute();
+    permute_pc1();
     split_key();
-
     generate_keys();
+    permute_pc2();
+
+    for(auto const &subkey: perm_subkeys)
+    {
+        for(auto const &bit: subkey)
+        {
+            std::cout << bit;
+        }
+        std::cout << "\n";
+    }
 }
