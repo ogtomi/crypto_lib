@@ -142,6 +142,7 @@ void DES::encrypt(const std::string &message)
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
     std::bitset<1> s[32];
+    std::bitset<1> s_p[32];
     int row;
     int col;
     int s_num;
@@ -163,6 +164,7 @@ void DES::encrypt(const std::string &message)
             xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
         }
 
+        // Perform s_boxes operations
         for(int j = 0; j < 48; j+=6)
         {
             row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
@@ -174,6 +176,12 @@ void DES::encrypt(const std::string &message)
             s[s_index++] = s_boxes[s_num][row][col];
 
             s_num++;
+        }
+
+        // Permutation
+        for(int j = 0; j < 32; j++)
+        {
+            s_p[j] = s[p[j] - 1];
         }
     }
 }
