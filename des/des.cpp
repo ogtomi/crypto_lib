@@ -141,9 +141,16 @@ void DES::encrypt(const std::string &message)
 
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
+    std::bitset<1> s[32];
+    int row;
+    int col;
+    int s_num;
+    int s_index;
 
     for(int i = 0; i < 16; i++)
     {
+        s_num = 0;
+        s_index = 0;
         // Expansion
         for(int j = 0; j < 48; j++)
         {
@@ -154,6 +161,19 @@ void DES::encrypt(const std::string &message)
         for(int j = 0; j < 48; j++)
         {   
             xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
+        }
+
+        for(int j = 0; j < 48; j+=6)
+        {
+            row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
+            col = (xor_subkey[j + 1].to_ulong() << 3) + (xor_subkey[j + 2].to_ulong() << 2) + (xor_subkey[j + 3].to_ulong() << 1) + xor_subkey[j + 4].to_ulong();
+
+            s[s_index++] = s_boxes[s_num][row][col] >> 3;
+            s[s_index++] = s_boxes[s_num][row][col] >> 2;
+            s[s_index++] = s_boxes[s_num][row][col] >> 1;
+            s[s_index++] = s_boxes[s_num][row][col];
+
+            s_num++;
         }
     }
 }
