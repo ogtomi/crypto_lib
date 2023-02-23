@@ -1,5 +1,7 @@
 #include <iostream>
 #include <sstream>
+#include <stdio.h>
+#include <cstring>
 #include <iomanip>
 #include "sha256.h"
 
@@ -42,7 +44,7 @@ void SHA256::to_binary(const std::string &str)
 void SHA256::pad()
 {
     uint8_t i = block_len;
-    uint8_t end = 56;
+    uint8_t end = block_len < 56 ? 56 : 64;
 
     m_data[i++] = 0x80;
     
@@ -50,6 +52,16 @@ void SHA256::pad()
     {
         m_data[i] = 0x00;
         i++;
+    }
+
+    if(block_len >= 56)
+    {
+        transform();
+        
+        for(i = 0; i < 56; i++)
+        {
+            m_data[i] = 0;
+        }
     }
 
     // Setting length bytes
