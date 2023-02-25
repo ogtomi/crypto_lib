@@ -143,6 +143,8 @@ void DES::encrypt(const std::string &message)
     std::bitset<1> xor_subkey[48];
     std::bitset<1> s[32];
     std::bitset<1> s_p[32];
+    std::bitset<1> temp[32];
+
     int row;
     int col;
     int s_num;
@@ -152,6 +154,7 @@ void DES::encrypt(const std::string &message)
     {
         s_num = 0;
         s_index = 0;
+
         // Expansion
         for(int j = 0; j < 48; j++)
         {
@@ -182,6 +185,14 @@ void DES::encrypt(const std::string &message)
         for(int j = 0; j < 32; j++)
         {
             s_p[j] = s[p[j] - 1];
+        }
+        
+        // Feistel cipher
+        for(int j = 0; j < 32; j++)
+        {
+            temp[j] = left_half_message[j];
+            left_half_message[j] = right_half_message[j];
+            right_half_message[j] = temp[j] ^ s_p[j];
         }
     }
 }
