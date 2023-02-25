@@ -17,7 +17,24 @@ private:
     std::bitset<1> left_half_key[28];
     std::bitset<1> subkeys[16][56];
     std::bitset<1> perm_subkeys[16][48];
-    
+    std::bitset<4> cipher_message[16];
+
+public: 
+    void run_testing(const std::string &key, std::string &message);
+
+private:
+    void to_binary_key(const std::string &str);
+    void to_binary_message(const std::string &str);
+    void permute_pc1();
+    void permute_pc2();
+    void ip_message();
+    void split_key();
+    void split_message();
+    void rotate(int n);
+    void generate_keys(const std::string &key);
+    void encrypt(std::string &message);
+    void bits2string(std::string &message);
+
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
     const uint8_t pc_1[56] = { 57, 49, 41, 33, 25, 17, 9,
@@ -64,6 +81,15 @@ private:
                             32, 27, 3, 9,
                             19, 13, 30, 6,
                             22, 11, 4, 25 };
+
+    const uint8_t inv_ip[64] = { 40, 8, 48, 16, 56, 24, 64, 32,
+                                39, 7, 47, 15, 55, 23, 63, 31,
+                                38, 6, 46, 14, 54, 22, 62, 30,
+                                37, 5, 45, 13, 53, 21, 61, 29,
+                                36, 4, 44, 12, 52, 20, 60, 28,
+                                35, 3, 42, 11, 51, 19, 59, 27,
+                                34, 2, 42, 10, 50, 18, 58, 26,
+                                33, 1, 41, 9, 49, 17, 57, 25 };
 
     const uint8_t s_boxes[8][4][16] = 
     {{
@@ -114,21 +140,6 @@ private:
         7, 11, 4, 1, 9, 12, 14, 2, 0, 6, 10, 13, 15, 3, 5, 8,
         2, 1, 14, 7, 4, 10, 8, 13, 15, 12, 9, 0, 3, 5, 6, 11
     }};
-
-public: 
-    void run_testing(const std::string &key, const std::string &message);
-
-private:
-    void to_binary_key(const std::string &str);
-    void to_binary_message(const std::string &str);
-    void permute_pc1();
-    void permute_pc2();
-    void ip_message();
-    void split_key();
-    void split_message();
-    void rotate(int n);
-    void generate_keys(const std::string &key);
-    void encrypt(const std::string &message);
 };
 
 #endif
