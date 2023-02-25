@@ -1,5 +1,7 @@
 #include "des.h"
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 
 void DES::to_binary_key(const std::string &str)
 {
@@ -133,7 +135,7 @@ void DES::generate_keys(const std::string &key)
     permute_pc2();
 }
 
-void DES::encrypt(const std::string &message)
+void DES::encrypt(std::string &message)
 {
     to_binary_message(message);
     ip_message();
@@ -144,6 +146,7 @@ void DES::encrypt(const std::string &message)
     std::bitset<1> s[32];
     std::bitset<1> s_p[32];
     std::bitset<1> temp[32];
+    std::bitset<1> c_message[64];
 
     int row;
     int col;
@@ -195,10 +198,53 @@ void DES::encrypt(const std::string &message)
             right_half_message[j] = temp[j] ^ s_p[j];
         }
     }
+
+    int j = 0;
+    
+    // Concat right and left halves of messages
+    for(int i = 0; i < 64; i++)
+    {
+        if(j < 32)
+        {
+            c_message[i] = right_half_message[j];
+        }
+        else
+        {
+            c_message[i] = left_half_message[j - 32];
+        }
+
+        j++;
+    }
+
+    // Final permutation
+    for(int i = 0; i < 64; i++)
+    {
+        c_message[i] = c_message[inv_ip[i] - 1];
+    }
+
+    int k = 0;
+    for(int i = 0; i < 16; i++)
+    {
+        cipher_message[i] = (c_message[k++].to_ulong() << 3) + (c_message[k++].to_ulong() << 2) + (c_message[k++].to_ulong() << 1) + (c_message[k++].to_ulong());
+    }
 }
 
-void DES::run_testing(const std::string &key, const std::string &message)
+void DES::bits2string(std::string &message)
+{
+    std::stringstream ss;
+    ss << std::setfill('0') << std::hex;
+
+    for(const auto &b: cipher_message)
+    {
+        ss << std::setw(1) << b.to_ulong();
+    }
+
+    message = ss.str();
+}
+
+void DES::run_testing(const std::string &key, std::string &message)
 {
     generate_keys(key);
     encrypt(message);
+    bits2string(message);
 }
