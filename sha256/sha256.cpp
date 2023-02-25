@@ -151,11 +151,9 @@ std::bitset<32> SHA256::majority(std::bitset<32> a, std::bitset<32> b, std::bits
 std::string SHA256::digest(std::string input_str)
 {
     std::stringstream ss;
-    ss << std::setfill('0') <<std::hex;
+    ss << std::setfill('0') << std::hex;
 
     to_binary(input_str);
-    //pad();
-    //transform();
 
     for(auto const &w: hash_val)
     {   
