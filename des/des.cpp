@@ -226,7 +226,7 @@ void DES::encrypt(std::string &message)
     int k = 0;
     for(int i = 0; i < 16; i++)
     {
-        cipher_message[i] = (c_message[k++].to_ulong() << 3) + (c_message[k++].to_ulong() << 2) + (c_message[k++].to_ulong() << 1) + (c_message[k++].to_ulong());
+        cipher_message[i] = (c_message_perm[k++].to_ulong() << 3) + (c_message_perm[k++].to_ulong() << 2) + (c_message_perm[k++].to_ulong() << 1) + (c_message_perm[k++].to_ulong());
     }
 }
 
