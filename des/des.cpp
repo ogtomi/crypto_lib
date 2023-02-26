@@ -147,6 +147,7 @@ void DES::encrypt(std::string &message)
     std::bitset<1> s_p[32];
     std::bitset<1> temp[32];
     std::bitset<1> c_message[64];
+    std::bitset<1> c_message_perm[64];
 
     int row;
     int col;
@@ -189,7 +190,7 @@ void DES::encrypt(std::string &message)
         {
             s_p[j] = s[p[j] - 1];
         }
-        
+
         // Feistel cipher
         for(int j = 0; j < 32; j++)
         {
@@ -219,13 +220,13 @@ void DES::encrypt(std::string &message)
     // Final permutation
     for(int i = 0; i < 64; i++)
     {
-        c_message[i] = c_message[inv_ip[i] - 1];
+        c_message_perm[i] = c_message[inv_ip[i] - 1];
     }
 
     int k = 0;
     for(int i = 0; i < 16; i++)
     {
-        cipher_message[i] = (c_message[k++].to_ulong() << 3) + (c_message[k++].to_ulong() << 2) + (c_message[k++].to_ulong() << 1) + (c_message[k++].to_ulong());
+        cipher_message[i] = (c_message_perm[k++].to_ulong() << 3) + (c_message_perm[k++].to_ulong() << 2) + (c_message_perm[k++].to_ulong() << 1) + (c_message_perm[k++].to_ulong());
     }
 }
 
