@@ -228,6 +228,7 @@ void DES::encrypt(std::string &message)
     {
         cipher_message[i] = (c_message_perm[k++].to_ulong() << 3) + (c_message_perm[k++].to_ulong() << 2) + (c_message_perm[k++].to_ulong() << 1) + (c_message_perm[k++].to_ulong());
     }
+    bits2string(message);
 }
 
 void DES::bits2string(std::string &message)
@@ -241,11 +242,4 @@ void DES::bits2string(std::string &message)
     }
 
     message = ss.str();
-}
-
-void DES::run_testing(const std::string &key, std::string &message)
-{
-    generate_keys(key);
-    encrypt(message);
-    bits2string(message);
 }
