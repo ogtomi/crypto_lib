@@ -118,69 +118,75 @@ void DES::generate_keys(const std::string &key)
     permute_pc2();
 }
 
-void DES::encrypt(std::string &message)
+void DES::round_op(int i)
 {
-    to_binary(message, m_data);
-    ip_message();
-    split_message();
-
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
     std::bitset<1> s[32];
     std::bitset<1> s_p[32];
     std::bitset<1> temp[32];
-    std::bitset<1> c_message[64];
-    std::bitset<1> c_message_perm[64];
 
     int row;
     int col;
     int s_num;
     int s_index;
 
+    s_num = 0;
+    s_index = 0;
+
+    // Expansion
+    for(int j = 0; j < 48; j++)
+    {
+        right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
+    }
+
+    // XOR with subkey
+    for(int j = 0; j < 48; j++)
+    {   
+        xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
+    }
+
+    // Perform s_boxes operations
+    for(int j = 0; j < 48; j+=6)
+    {
+        row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
+        col = (xor_subkey[j + 1].to_ulong() << 3) + (xor_subkey[j + 2].to_ulong() << 2) + (xor_subkey[j + 3].to_ulong() << 1) + xor_subkey[j + 4].to_ulong();
+
+        s[s_index++] = s_boxes[s_num][row][col] >> 3;
+        s[s_index++] = s_boxes[s_num][row][col] >> 2;
+        s[s_index++] = s_boxes[s_num][row][col] >> 1;
+        s[s_index++] = s_boxes[s_num][row][col];
+
+        s_num++;
+    }
+
+    // Permutation
+    for(int j = 0; j < 32; j++)
+    {
+        s_p[j] = s[p[j] - 1];
+    }
+
+    // Feistel cipher
+    for(int j = 0; j < 32; j++)
+    {
+        temp[j] = left_half_message[j];
+        left_half_message[j] = right_half_message[j];
+        right_half_message[j] = temp[j] ^ s_p[j];
+    }
+}
+
+void DES::encrypt(std::string &message)
+{
+    to_binary(message, m_data);
+    ip_message();
+    split_message();
+
+    std::bitset<1> c_message[64];
+    std::bitset<1> c_message_perm[64];
+
     for(int i = 0; i < 16; i++)
     {
-        s_num = 0;
-        s_index = 0;
-
-        // Expansion
-        for(int j = 0; j < 48; j++)
-        {
-            right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
-        }
-
-        // XOR with subkey
-        for(int j = 0; j < 48; j++)
-        {   
-            xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
-        }
-
-        // Perform s_boxes operations
-        for(int j = 0; j < 48; j+=6)
-        {
-            row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
-            col = (xor_subkey[j + 1].to_ulong() << 3) + (xor_subkey[j + 2].to_ulong() << 2) + (xor_subkey[j + 3].to_ulong() << 1) + xor_subkey[j + 4].to_ulong();
-
-            s[s_index++] = s_boxes[s_num][row][col] >> 3;
-            s[s_index++] = s_boxes[s_num][row][col] >> 2;
-            s[s_index++] = s_boxes[s_num][row][col] >> 1;
-            s[s_index++] = s_boxes[s_num][row][col];
-
-            s_num++;
-        }
-
-        // Permutation
-        for(int j = 0; j < 32; j++)
-        {
-            s_p[j] = s[p[j] - 1];
-        }
-
-        // Feistel cipher
-        for(int j = 0; j < 32; j++)
-        {
-            temp[j] = left_half_message[j];
-            left_half_message[j] = right_half_message[j];
-            right_half_message[j] = temp[j] ^ s_p[j];
-        }
+        round_op(i);
     }
 
     int j = 0;
@@ -207,6 +213,7 @@ void DES::encrypt(std::string &message)
     }
 
     int k = 0;
+
     for(int i = 0; i < 16; i++)
     {
         cipher_message[i] = (c_message_perm[k].to_ulong() << 3) + (c_message_perm[k + 1].to_ulong() << 2) + (c_message_perm[k + 2].to_ulong() << 1) + (c_message_perm[k + 3].to_ulong());
@@ -222,63 +229,12 @@ void DES::decrypt(std::string &cipher)
     ip_message();
     split_message();
 
-    std::bitset<1> right_half_message_expanded[48];
-    std::bitset<1> xor_subkey[48];
-    std::bitset<1> s[32];
-    std::bitset<1> s_p[32];
-    std::bitset<1> temp[32];
     std::bitset<1> p_message[64];
     std::bitset<1> p_message_perm[64];
 
-    int row;
-    int col;
-    int s_num;
-    int s_index;
-
     for(int i = 15; i >= 0; i--)
     {
-        s_num = 0;
-        s_index = 0;
-
-        // Expansion
-        for(int j = 0; j < 48; j++)
-        {
-            right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
-        }
-
-        // XOR with subkey
-        for(int j = 0; j < 48; j++)
-        {
-            xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
-        }
-
-        // Perform s_boxes operations
-        for(int j = 0; j < 48; j+=6)
-        {
-            row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
-            col = (xor_subkey[j + 1].to_ulong() << 3) + (xor_subkey[j + 2].to_ulong() << 2) + (xor_subkey[j + 3].to_ulong() << 1) + (xor_subkey[j + 4].to_ulong());
-
-            s[s_index++] = s_boxes[s_num][row][col] >> 3;
-            s[s_index++] = s_boxes[s_num][row][col] >> 2;
-            s[s_index++] = s_boxes[s_num][row][col] >> 1;
-            s[s_index++] = s_boxes[s_num][row][col];
-
-            s_num++;            
-        }
-
-        // Permutation
-        for(int j = 0; j < 32; j++)
-        {
-            s_p[j] = s[p[j] - 1];
-        }
-
-        // Feistel cipher
-        for(int j = 0; j < 32; j++)
-        {
-            temp[j] = left_half_message[j];
-            left_half_message[j] = right_half_message[j];
-            right_half_message[j] = temp[j] ^ s_p[j];
-        }
+        round_op(i);
     }
     
     int j = 0;
