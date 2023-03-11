@@ -209,7 +209,8 @@ void DES::encrypt(std::string &message)
     int k = 0;
     for(int i = 0; i < 16; i++)
     {
-        cipher_message[i] = (c_message_perm[k++].to_ulong() << 3) + (c_message_perm[k++].to_ulong() << 2) + (c_message_perm[k++].to_ulong() << 1) + (c_message_perm[k++].to_ulong());
+        cipher_message[i] = (c_message_perm[k].to_ulong() << 3) + (c_message_perm[k + 1].to_ulong() << 2) + (c_message_perm[k + 2].to_ulong() << 1) + (c_message_perm[k + 3].to_ulong());
+        k += 4;
     }
 
     bits2string(message, cipher_message);
@@ -306,7 +307,8 @@ void DES::decrypt(std::string &cipher)
     int k = 0;
     for(int i = 0; i < 16; i++)
     {
-        plain_message[i] = (p_message_perm[k++].to_ulong() << 3) + (p_message_perm[k++].to_ulong() << 2) + (p_message_perm[k++].to_ulong() << 1) + (p_message_perm[k++].to_ulong());
+        plain_message[i] = (p_message_perm[k].to_ulong() << 3) + (p_message_perm[k + 1].to_ulong() << 2) + (p_message_perm[k + 2].to_ulong() << 1) + (p_message_perm[k + 3].to_ulong());
+        k += 4;
     }
 
     bits2string(cipher, plain_message);
