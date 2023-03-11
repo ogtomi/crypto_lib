@@ -19,8 +19,10 @@ private:
     std::bitset<1> perm_subkeys[16][48];
     std::bitset<4> cipher_message[16];
 
-public: 
-    void run_testing(const std::string &key, std::string &message);
+public:
+    void generate_keys(const std::string &key);
+    void encrypt(std::string &message);
+    void decrypt(std::string &cipher);
 
 private:
     void to_binary_key(const std::string &str);
@@ -31,8 +33,6 @@ private:
     void split_key();
     void split_message();
     void rotate(int n);
-    void generate_keys(const std::string &key);
-    void encrypt(std::string &message);
     void bits2string(std::string &message);
 
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
