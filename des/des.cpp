@@ -3,9 +3,9 @@
 #include <sstream>
 #include <iomanip>
 
-void DES::to_binary_key(const std::string &str)
+void DES::to_binary(const std::string &str, std::bitset<1> *data)
 {
-    uint8_t k_len = 0;
+    uint8_t len = 0;
     uint64_t value;
 
     for(size_t i = 0; i < str.size(); i++)
@@ -13,27 +13,10 @@ void DES::to_binary_key(const std::string &str)
         std::string str_i(&str[i], 1);
         value = std::stoi(str_i, nullptr, 16);
 
-        k_data[k_len++] = value >> 3;
-        k_data[k_len++] = value >> 2;
-        k_data[k_len++] = value >> 1;
-        k_data[k_len++] = value;
-    }
-}
-
-void DES::to_binary_message(const std::string &str)
-{
-    uint8_t m_len = 0;
-    uint64_t value;
-
-    for(size_t i = 0; i < str.size(); i++)
-    {   
-        std::string str_i(&str[i], 1);
-        value = std::stoi(str_i, nullptr, 16);
-
-        m_data[m_len++] = value >> 3;
-        m_data[m_len++] = value >> 2;
-        m_data[m_len++] = value >> 1;
-        m_data[m_len++] = value;
+        data[len++] = value >> 3;
+        data[len++] = value >> 2;
+        data[len++] = value >> 1;
+        data[len++] = value;
     }
 }
 
@@ -111,7 +94,7 @@ void DES::rotate(int n)
 
 void DES::generate_keys(const std::string &key)
 {
-    to_binary_key(key);
+    to_binary(key, k_data);
     permute_pc1();
     split_key();
 
@@ -137,7 +120,7 @@ void DES::generate_keys(const std::string &key)
 
 void DES::encrypt(std::string &message)
 {
-    to_binary_message(message);
+    to_binary(message, m_data);
     ip_message();
     split_message();
 
@@ -228,17 +211,115 @@ void DES::encrypt(std::string &message)
     {
         cipher_message[i] = (c_message_perm[k++].to_ulong() << 3) + (c_message_perm[k++].to_ulong() << 2) + (c_message_perm[k++].to_ulong() << 1) + (c_message_perm[k++].to_ulong());
     }
-    bits2string(message);
+
+    bits2string(message, cipher_message);
 }
 
-void DES::bits2string(std::string &message)
+void DES::decrypt(std::string &cipher)
+{
+    to_binary(cipher, m_data);
+    ip_message();
+    split_message();
+
+    std::bitset<1> right_half_message_expanded[48];
+    std::bitset<1> xor_subkey[48];
+    std::bitset<1> s[32];
+    std::bitset<1> s_p[32];
+    std::bitset<1> temp[32];
+    std::bitset<1> p_message[64];
+    std::bitset<1> p_message_perm[64];
+
+    int row;
+    int col;
+    int s_num;
+    int s_index;
+
+    for(int i = 15; i >= 0; i--)
+    {
+        s_num = 0;
+        s_index = 0;
+
+        // Expansion
+        for(int j = 0; j < 48; j++)
+        {
+            right_half_message_expanded[j] = right_half_message[expansion_table[j] - 1];
+        }
+
+        // XOR with subkey
+        for(int j = 0; j < 48; j++)
+        {
+            xor_subkey[j] = (perm_subkeys[i][j] ^ right_half_message_expanded[j]);
+        }
+
+        // Perform s_boxes operations
+        for(int j = 0; j < 48; j+=6)
+        {
+            row = (xor_subkey[j].to_ulong() << 1) + (xor_subkey[j + 5].to_ulong());
+            col = (xor_subkey[j + 1].to_ulong() << 3) + (xor_subkey[j + 2].to_ulong() << 2) + (xor_subkey[j + 3].to_ulong() << 1) + (xor_subkey[j + 4].to_ulong());
+
+            s[s_index++] = s_boxes[s_num][row][col] >> 3;
+            s[s_index++] = s_boxes[s_num][row][col] >> 2;
+            s[s_index++] = s_boxes[s_num][row][col] >> 1;
+            s[s_index++] = s_boxes[s_num][row][col];
+
+            s_num++;            
+        }
+
+        // Permutation
+        for(int j = 0; j < 32; j++)
+        {
+            s_p[j] = s[p[j] - 1];
+        }
+
+        // Feistel cipher
+        for(int j = 0; j < 32; j++)
+        {
+            temp[j] = left_half_message[j];
+            left_half_message[j] = right_half_message[j];
+            right_half_message[j] = temp[j] ^ s_p[j];
+        }
+    }
+    
+    int j = 0;
+
+    // Concat right and left halves of the messages
+    for(int i = 0; i < 64; i++)
+    {
+        if(j < 32)
+        {
+            p_message[i] = right_half_message[j];
+        }
+        else
+        {
+            p_message[i] = left_half_message[j - 32];
+        }
+
+        j++;
+    }
+
+    // Final permutation
+    for(int i = 0; i < 64; i++)
+    {
+        p_message_perm[i] = p_message[inv_ip[i] - 1];
+    }
+
+    int k = 0;
+    for(int i = 0; i < 16; i++)
+    {
+        plain_message[i] = (p_message_perm[k++].to_ulong() << 3) + (p_message_perm[k++].to_ulong() << 2) + (p_message_perm[k++].to_ulong() << 1) + (p_message_perm[k++].to_ulong());
+    }
+
+    bits2string(cipher, plain_message);
+}
+
+void DES::bits2string(std::string &message, std::bitset<4> *bits)
 {
     std::stringstream ss;
     ss << std::setfill('0') << std::hex;
 
-    for(const auto &b: cipher_message)
+    for(int i = 0; i < 16; i++)
     {
-        ss << std::setw(1) << b.to_ulong();
+        ss << std::setw(1) << bits[i].to_ulong();
     }
 
     message = ss.str();
