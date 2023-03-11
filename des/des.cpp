@@ -175,6 +175,46 @@ void DES::round_op(int i)
     }
 }
 
+void DES::concat_halves(std::bitset<1> *concat_m)
+{
+    int j = 0;
+    
+    // Concat right and left halves of messages
+    for(int i = 0; i < 64; i++)
+    {
+        if(j < 32)
+        {
+            concat_m[i] = right_half_message[j];
+        }
+        else
+        {
+            concat_m[i] = left_half_message[j - 32];
+        }
+
+        j++;
+    }
+}
+
+void DES::final_permutation(std::bitset<1> *perm_m, std::bitset<1> *m)
+{
+    // Final permutation
+    for(int i = 0; i < 64; i++)
+    {
+        perm_m[i] = m[inv_ip[i] - 1];
+    }
+}
+
+void DES::get_message(std::bitset<4> *m, std::bitset<1> *perm_m)
+{
+    int k = 0;
+
+    for(int i = 0; i < 16; i++)
+    {
+        m[i] = (perm_m[k].to_ulong() << 3) + (perm_m[k + 1].to_ulong() << 2) + (perm_m[k + 2].to_ulong() << 1) + (perm_m[k + 3].to_ulong());
+        k += 4;
+    }
+}
+
 void DES::encrypt(std::string &message)
 {
     to_binary(message, m_data);
@@ -189,37 +229,9 @@ void DES::encrypt(std::string &message)
         round_op(i);
     }
 
-    int j = 0;
-    
-    // Concat right and left halves of messages
-    for(int i = 0; i < 64; i++)
-    {
-        if(j < 32)
-        {
-            c_message[i] = right_half_message[j];
-        }
-        else
-        {
-            c_message[i] = left_half_message[j - 32];
-        }
-
-        j++;
-    }
-
-    // Final permutation
-    for(int i = 0; i < 64; i++)
-    {
-        c_message_perm[i] = c_message[inv_ip[i] - 1];
-    }
-
-    int k = 0;
-
-    for(int i = 0; i < 16; i++)
-    {
-        cipher_message[i] = (c_message_perm[k].to_ulong() << 3) + (c_message_perm[k + 1].to_ulong() << 2) + (c_message_perm[k + 2].to_ulong() << 1) + (c_message_perm[k + 3].to_ulong());
-        k += 4;
-    }
-
+    concat_halves(c_message);
+    final_permutation(c_message_perm, c_message);
+    get_message(cipher_message, c_message_perm);
     bits2string(message, cipher_message);
 }
 
@@ -237,36 +249,9 @@ void DES::decrypt(std::string &cipher)
         round_op(i);
     }
     
-    int j = 0;
-
-    // Concat right and left halves of the messages
-    for(int i = 0; i < 64; i++)
-    {
-        if(j < 32)
-        {
-            p_message[i] = right_half_message[j];
-        }
-        else
-        {
-            p_message[i] = left_half_message[j - 32];
-        }
-
-        j++;
-    }
-
-    // Final permutation
-    for(int i = 0; i < 64; i++)
-    {
-        p_message_perm[i] = p_message[inv_ip[i] - 1];
-    }
-
-    int k = 0;
-    for(int i = 0; i < 16; i++)
-    {
-        plain_message[i] = (p_message_perm[k].to_ulong() << 3) + (p_message_perm[k + 1].to_ulong() << 2) + (p_message_perm[k + 2].to_ulong() << 1) + (p_message_perm[k + 3].to_ulong());
-        k += 4;
-    }
-
+    concat_halves(p_message);
+    final_permutation(p_message_perm, p_message);
+    get_message(plain_message, p_message_perm);
     bits2string(cipher, plain_message);
 }
 
