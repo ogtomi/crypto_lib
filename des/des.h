@@ -18,6 +18,7 @@ private:
     std::bitset<1> subkeys[16][56];
     std::bitset<1> perm_subkeys[16][48];
     std::bitset<4> cipher_message[16];
+    std::bitset<4> plain_message[16];
 
 public:
     void generate_keys(const std::string &key);
@@ -25,15 +26,14 @@ public:
     void decrypt(std::string &cipher);
 
 private:
-    void to_binary_key(const std::string &str);
-    void to_binary_message(const std::string &str);
+    void to_binary(const std::string &str, std::bitset<1> *data);
     void permute_pc1();
     void permute_pc2();
     void ip_message();
     void split_key();
     void split_message();
     void rotate(int n);
-    void bits2string(std::string &message);
+    void bits2string(std::string &message, std::bitset<4> *bits);
 
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
 
