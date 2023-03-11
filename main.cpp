@@ -29,9 +29,9 @@ int main()
     std::string key = "133457799bbcdff1";
 
     DES des;
-
+    des.generate_keys(key);
     std::cout << message << std::endl;
-    des.run_testing(key, message);
+    des.encrypt(message);
     std::cout << message << std::endl;
 
     return 0;
