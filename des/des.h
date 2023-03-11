@@ -33,6 +33,10 @@ private:
     void split_key();
     void split_message();
     void rotate(int n);
+    void round_op(int i);
+    void concat_halves(std::bitset<1> *concat_m);
+    void final_permutation(std::bitset<1> *perm_m, std::bitset<1> *m);
+    void get_message(std::bitset<4> *m, std::bitset<1> *perm_m);
     void bits2string(std::string &message, std::bitset<4> *bits);
 
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
