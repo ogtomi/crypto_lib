@@ -217,12 +217,12 @@ void DES::get_message(std::bitset<4> *m, std::bitset<1> *perm_m)
 
 void DES::encrypt(std::string &message)
 {
+    std::bitset<1> c_message[64];
+    std::bitset<1> c_message_perm[64];
+    
     to_binary(message, m_data);
     ip_message();
     split_message();
-
-    std::bitset<1> c_message[64];
-    std::bitset<1> c_message_perm[64];
 
     for(int i = 0; i < 16; i++)
     {
@@ -237,12 +237,12 @@ void DES::encrypt(std::string &message)
 
 void DES::decrypt(std::string &cipher)
 {
+    std::bitset<1> p_message[64];
+    std::bitset<1> p_message_perm[64];
+    
     to_binary(cipher, m_data);
     ip_message();
     split_message();
-
-    std::bitset<1> p_message[64];
-    std::bitset<1> p_message_perm[64];
 
     for(int i = 15; i >= 0; i--)
     {
