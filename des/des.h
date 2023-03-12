@@ -16,9 +16,6 @@ private:
     std::bitset<4> cipher_message[16];
     std::bitset<4> plain_message[16];
 
-protected:
-    uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
-
 public:
     void generate_keys(const std::string &key);
     void encrypt(std::string &message);
@@ -40,6 +37,9 @@ private:
     void get_message(std::bitset<4> *m, std::bitset<1> *perm_m);
     void bits2string(std::string &message, std::bitset<4> *bits);
 
+protected:
+    uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
+    
     const uint8_t pc_1[56] = { 57, 49, 41, 33, 25, 17, 9,
                                 1, 58, 50, 42, 34, 26, 18,
                                 10, 2, 59, 51, 43, 35, 27,
