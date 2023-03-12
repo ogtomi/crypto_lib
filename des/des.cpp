@@ -123,7 +123,7 @@ void DES::generate_keys(const std::string &key)
     permute_pc2();
 }
 
-void DES::round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message)
+void DES::round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> perm_subkeys[][48])
 {
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
@@ -236,7 +236,7 @@ void DES::encrypt(std::string &message)
 
     for(int i = 0; i < 16; i++)
     {
-        round_op(i, left_half_message, right_half_message);
+        round_op(i, left_half_message, right_half_message, perm_subkeys);
     }
 
     concat_halves(c_message, left_half_message, right_half_message);
@@ -261,7 +261,7 @@ void DES::decrypt(std::string &cipher)
 
     for(int i = 15; i >= 0; i--)
     {
-        round_op(i, left_half_message, right_half_message);
+        round_op(i, left_half_message, right_half_message, perm_subkeys);
     }
     
     concat_halves(p_message, left_half_message, right_half_message);
