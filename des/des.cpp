@@ -20,7 +20,7 @@ void DES::to_binary(const std::string &str, std::bitset<1> *data)
     }
 }
 
-void DES::permute_pc1()
+void DES::permute_pc1(std::bitset<1> *perm_key, const std::bitset<1> *k_data)
 {
     for(int i = 0; i < 56; i++)
     {
@@ -47,7 +47,7 @@ void DES::ip_message()
     }
 }
 
-void DES::split_key()
+void DES::split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, std::bitset<1> *perm_key)
 {      
     for(size_t i = 0; i < 28; i++)
     {
@@ -65,7 +65,7 @@ void DES::split_message()
     }
 }
 
-void DES::rotate(int n)
+void DES::rotate(int n, std::bitset<1> *left_half_key, std::bitset<1> *right_half_key)
 {
     std::bitset<1> temp_right[28];
     std::bitset<1> temp_left[28];
@@ -94,13 +94,18 @@ void DES::rotate(int n)
 
 void DES::generate_keys(const std::string &key)
 {
+    std::bitset<1> k_data[64];
+    std::bitset<1> perm_key[56];
+    std::bitset<1> left_half_key[28];
+    std::bitset<1> right_half_key[28];
+
     to_binary(key, k_data);
-    permute_pc1();
-    split_key();
+    permute_pc1(perm_key, k_data);
+    split_key(left_half_key, right_half_key, perm_key);
 
     for(size_t i = 0; i < 16; i++)
     {
-        rotate(no_shifts[i]);
+        rotate(no_shifts[i], left_half_key, right_half_key);
 
         for(size_t j = 0; j < 56; j++)
         {   
