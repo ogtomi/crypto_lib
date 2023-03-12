@@ -18,11 +18,11 @@ public:
 protected:
     void to_binary(const std::string &str, std::bitset<1> *data);
     void permute_pc1(std::bitset<1> *perm_key, const std::bitset<1> *k_data);
-    void permute_pc2();
     void split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, const std::bitset<1> *perm_key);
     void rotate(int n, std::bitset<1> *left_half_key, std::bitset<1> *right_half_key);
 
 private:
+    void permute_pc2();
     void ip_message(std::bitset<1> *perm_message, const std::bitset<1> *m_data);
     void split_message(std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> *perm_message);
     void round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message);
