@@ -20,9 +20,6 @@ protected:
     void permute_pc1(std::bitset<1> *perm_key, const std::bitset<1> *k_data);
     void split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, const std::bitset<1> *perm_key);
     void rotate(int n, std::bitset<1> *left_half_key, std::bitset<1> *right_half_key);
-
-private:
-    void permute_pc2();
     void ip_message(std::bitset<1> *perm_message, const std::bitset<1> *m_data);
     void split_message(std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> *perm_message);
     void round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> perm_subkeys[][48]);
@@ -30,6 +27,9 @@ private:
     void final_permutation(std::bitset<1> *perm_m, const std::bitset<1> *m);
     void get_message(std::bitset<4> *m, const std::bitset<1> *perm_m);
     void bits2string(std::string &message, const std::bitset<4> *bits);
+
+private:
+    void permute_pc2();
 
 protected:
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
