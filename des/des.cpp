@@ -39,7 +39,7 @@ void DES::permute_pc2()
     }
 }
 
-void DES::ip_message()
+void DES::ip_message(std::bitset<1> *perm_message, const std::bitset<1> *m_data)
 {
     for(int i = 0; i < 64; i++)
     {
@@ -47,7 +47,7 @@ void DES::ip_message()
     }
 }
 
-void DES::split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, std::bitset<1> *perm_key)
+void DES::split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, const std::bitset<1> *perm_key)
 {      
     for(size_t i = 0; i < 28; i++)
     {
@@ -56,7 +56,7 @@ void DES::split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_ke
     }
 }
 
-void DES::split_message()
+void DES::split_message(std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> *perm_message)
 {
     for(size_t i = 0; i < 32; i++)
     {
@@ -123,7 +123,7 @@ void DES::generate_keys(const std::string &key)
     permute_pc2();
 }
 
-void DES::round_op(int i)
+void DES::round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message)
 {
     std::bitset<1> right_half_message_expanded[48];
     std::bitset<1> xor_subkey[48];
@@ -180,7 +180,7 @@ void DES::round_op(int i)
     }
 }
 
-void DES::concat_halves(std::bitset<1> *concat_m)
+void DES::concat_halves(std::bitset<1> *concat_m, const std::bitset<1> *left_half_message, const std::bitset<1> *right_half_message)
 {
     int j = 0;
     
@@ -200,7 +200,7 @@ void DES::concat_halves(std::bitset<1> *concat_m)
     }
 }
 
-void DES::final_permutation(std::bitset<1> *perm_m, std::bitset<1> *m)
+void DES::final_permutation(std::bitset<1> *perm_m, const std::bitset<1> *m)
 {
     // Final permutation
     for(int i = 0; i < 64; i++)
@@ -209,7 +209,7 @@ void DES::final_permutation(std::bitset<1> *perm_m, std::bitset<1> *m)
     }
 }
 
-void DES::get_message(std::bitset<4> *m, std::bitset<1> *perm_m)
+void DES::get_message(std::bitset<4> *m, const std::bitset<1> *perm_m)
 {
     int k = 0;
 
@@ -222,19 +222,24 @@ void DES::get_message(std::bitset<4> *m, std::bitset<1> *perm_m)
 
 void DES::encrypt(std::string &message)
 {
+    std::bitset<1> m_data[64];
+    std::bitset<1> perm_message[64];
+    std::bitset<1> left_half_message[32];
+    std::bitset<1> right_half_message[32];
     std::bitset<1> c_message[64];
     std::bitset<1> c_message_perm[64];
+    std::bitset<4> cipher_message[16];
     
     to_binary(message, m_data);
-    ip_message();
-    split_message();
+    ip_message(perm_message, m_data);
+    split_message(left_half_message, right_half_message, perm_message);
 
     for(int i = 0; i < 16; i++)
     {
-        round_op(i);
+        round_op(i, left_half_message, right_half_message);
     }
 
-    concat_halves(c_message);
+    concat_halves(c_message, left_half_message, right_half_message);
     final_permutation(c_message_perm, c_message);
     get_message(cipher_message, c_message_perm);
     bits2string(message, cipher_message);
@@ -242,25 +247,30 @@ void DES::encrypt(std::string &message)
 
 void DES::decrypt(std::string &cipher)
 {
+    std::bitset<1> m_data[64];
+    std::bitset<1> perm_message[64];
+    std::bitset<1> left_half_message[32];
+    std::bitset<1> right_half_message[32];
     std::bitset<1> p_message[64];
     std::bitset<1> p_message_perm[64];
+    std::bitset<4> plain_message[16];
     
     to_binary(cipher, m_data);
-    ip_message();
-    split_message();
+    ip_message(perm_message, m_data);
+    split_message(left_half_message, right_half_message, perm_message);
 
     for(int i = 15; i >= 0; i--)
     {
-        round_op(i);
+        round_op(i, left_half_message, right_half_message);
     }
     
-    concat_halves(p_message);
+    concat_halves(p_message, left_half_message, right_half_message);
     final_permutation(p_message_perm, p_message);
     get_message(plain_message, p_message_perm);
     bits2string(cipher, plain_message);
 }
 
-void DES::bits2string(std::string &message, std::bitset<4> *bits)
+void DES::bits2string(std::string &message, const std::bitset<4> *bits)
 {
     std::stringstream ss;
     ss << std::setfill('0') << std::hex;
