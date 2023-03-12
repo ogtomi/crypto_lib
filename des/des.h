@@ -7,40 +7,33 @@
 class DES
 {
 private:
-    std::bitset<1> k_data[64];
-    std::bitset<1> m_data[64];
-    std::bitset<1> perm_message[64];
-    std::bitset<1> right_half_message[32];
-    std::bitset<1> left_half_message[32];
-    std::bitset<1> perm_key[56];
-    std::bitset<1> right_half_key[28];
-    std::bitset<1> left_half_key[28];
     std::bitset<1> subkeys[16][56];
     std::bitset<1> perm_subkeys[16][48];
-    std::bitset<4> cipher_message[16];
-    std::bitset<4> plain_message[16];
 
 public:
     void generate_keys(const std::string &key);
     void encrypt(std::string &message);
     void decrypt(std::string &cipher);
 
-private:
+protected:
     void to_binary(const std::string &str, std::bitset<1> *data);
-    void permute_pc1();
+    void permute_pc1(std::bitset<1> *perm_key, const std::bitset<1> *k_data);
     void permute_pc2();
-    void ip_message();
-    void split_key();
-    void split_message();
-    void rotate(int n);
-    void round_op(int i);
-    void concat_halves(std::bitset<1> *concat_m);
-    void final_permutation(std::bitset<1> *perm_m, std::bitset<1> *m);
-    void get_message(std::bitset<4> *m, std::bitset<1> *perm_m);
-    void bits2string(std::string &message, std::bitset<4> *bits);
+    void split_key(std::bitset<1> *left_half_key, std::bitset<1> *right_half_key, const std::bitset<1> *perm_key);
+    void rotate(int n, std::bitset<1> *left_half_key, std::bitset<1> *right_half_key);
 
+private:
+    void ip_message(std::bitset<1> *perm_message, const std::bitset<1> *m_data);
+    void split_message(std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> *perm_message);
+    void round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message);
+    void concat_halves(std::bitset<1> *concat_m, const std::bitset<1> *left_half_message, const std::bitset<1> *right_half_message);
+    void final_permutation(std::bitset<1> *perm_m, const std::bitset<1> *m);
+    void get_message(std::bitset<4> *m, const std::bitset<1> *perm_m);
+    void bits2string(std::string &message, const std::bitset<4> *bits);
+
+protected:
     uint8_t no_shifts[16] = {1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1};
-
+    
     const uint8_t pc_1[56] = { 57, 49, 41, 33, 25, 17, 9,
                                 1, 58, 50, 42, 34, 26, 18,
                                 10, 2, 59, 51, 43, 35, 27,
