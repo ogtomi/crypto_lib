@@ -98,3 +98,54 @@ void DES3::encrypt(std::string &message)
     get_message(cipher_message, c_message_perm);
     bits2string(message, cipher_message);
 }
+
+void DES3::decrypt(std::string &cipher)
+{
+    std::bitset<1> m_data[64];
+    std::bitset<1> perm_message[64];
+    std::bitset<1> left_half_message[32];
+    std::bitset<1> right_half_message[32];
+    std::bitset<1> p_message[64];
+    std::bitset<1> p_message_perm[64];
+    std::bitset<4> plain_message[16];
+
+    to_binary(cipher, m_data);
+    
+    // 1st round - decryption with the 3rd set of keys
+    ip_message(perm_message, m_data);
+    split_message(left_half_message, right_half_message, perm_message);
+
+    for(int i = 15; i >= 0; i--)
+    {
+        round_op(i, left_half_message, right_half_message, perm_subkeys[2]);
+    }
+
+    concat_halves(p_message, left_half_message, right_half_message);
+    final_permutation(p_message_perm, p_message);
+
+    // 2nd round - encryption with the 2nd set of keys
+    ip_message(perm_message, p_message_perm);
+    split_message(left_half_message, right_half_message, perm_message);
+
+    for(int i = 0; i < 16; i++)
+    {
+        round_op(i, left_half_message, right_half_message, perm_subkeys[1]);
+    }
+
+    concat_halves(p_message, left_half_message, right_half_message);
+    final_permutation(p_message_perm, p_message);
+
+    // 3rd round - decryption with the 1st set of keys
+    ip_message(perm_message, p_message_perm);
+    split_message(left_half_message, right_half_message, perm_message);
+
+    for(int i = 15; i >= 0; i--)
+    {
+        round_op(i, left_half_message, right_half_message, perm_subkeys[0]);
+    }
+
+    concat_halves(p_message, left_half_message, right_half_message);
+    final_permutation(p_message_perm, p_message);
+    get_message(plain_message, p_message_perm);
+    bits2string(cipher, plain_message);
+}
