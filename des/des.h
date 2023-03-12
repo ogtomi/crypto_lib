@@ -25,7 +25,7 @@ private:
     void permute_pc2();
     void ip_message(std::bitset<1> *perm_message, const std::bitset<1> *m_data);
     void split_message(std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> *perm_message);
-    void round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message);
+    void round_op(int i, std::bitset<1> *left_half_message, std::bitset<1> *right_half_message, const std::bitset<1> perm_subkeys[][48]);
     void concat_halves(std::bitset<1> *concat_m, const std::bitset<1> *left_half_message, const std::bitset<1> *right_half_message);
     void final_permutation(std::bitset<1> *perm_m, const std::bitset<1> *m);
     void get_message(std::bitset<4> *m, const std::bitset<1> *perm_m);
