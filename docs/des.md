@@ -2,6 +2,8 @@
 
 DES (Data Encryption Standard) is a symmetric key algorithm for data encrption. It is based on the two fundamental attributes of cryptography: substitution and transposition. DES consists of 16 steps, each of which is called a round. Each round performs the steps fo substitution and transposition.
 
+## Encryption
+
 ## Steps in algorithm
 
 DES is a block cipher - it operates on plaintext blocks of a given size (64-bits) and returns ciphertext blocks of the same size.
@@ -48,6 +50,10 @@ To generate subkeys a hexadecimel key `K` is needed. The 63-bit key is permuted 
 
 4. Final permutation<br>
     In this step the final permutation is applied according to the table `inv_ip`. Result of that operation is the encrypted message.
+
+## Decryption
+
+Decryption is simply the inverse of encryption. It follows the same steps as above, but the order in which keys are applied is reversed.
 
 ## Cracking of the DES
 
