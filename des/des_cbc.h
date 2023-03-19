@@ -16,6 +16,7 @@ public:
 
 private:
     void split_message(const std::string &message, std::vector<std::string> &message_vec);
+    void xor_iv(std::string &submessage, const std::string &init_vec);
 };
 
 #endif
