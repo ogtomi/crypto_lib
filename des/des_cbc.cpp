@@ -28,9 +28,8 @@ void DES_CBC::xor_iv(std::string &submessage, const std::string &init_vec)
     bits2string(submessage, message_bin_4);
 }
 
-void DES_CBC::encrypt(std::string &message)
+void DES_CBC::encrypt(std::string &message, std::string &init_vec)
 {
-    std::string init_vec = "4bfa4d2304bb81fb";
     std::vector<std::string> message_vec;
 
     split_message(message, message_vec);
@@ -50,7 +49,7 @@ void DES_CBC::encrypt(std::string &message)
     }
 }
 
-void DES_CBC::decrypt(std::string &cipher)
+void DES_CBC::decrypt(std::string &cipher, std::string &init_vec)
 {
 
 }
