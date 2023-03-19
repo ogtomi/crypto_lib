@@ -28,7 +28,7 @@ void DES_CBC::xor_iv(std::string &submessage, const std::string &init_vec)
     bits2string(submessage, message_bin_4);
 }
 
-void DES_CBC::encrypt(std::string &message, std::string &init_vec)
+void DES_CBC::encrypt(std::string &message, std::string init_vec)
 {
     std::vector<std::string> message_vec;
 
@@ -49,7 +49,27 @@ void DES_CBC::encrypt(std::string &message, std::string &init_vec)
     }
 }
 
-void DES_CBC::decrypt(std::string &cipher, std::string &init_vec)
+void DES_CBC::decrypt(std::string &cipher, std::string init_vec)
 {
+    std::vector<std::string> cipher_vec;
+    std::string temp_vec{};
+    split_message(cipher, cipher_vec);
 
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i > 0)
+        {
+            init_vec = temp_vec;
+        }
+        temp_vec = cipher_vec[i];
+        DES::decrypt(cipher_vec[i]);
+        xor_iv(cipher_vec[i], init_vec);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
 }
