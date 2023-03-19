@@ -53,6 +53,7 @@ void DES_CBC::decrypt(std::string &cipher, std::string init_vec)
 {
     std::vector<std::string> cipher_vec;
     std::string temp_vec{};
+    
     split_message(cipher, cipher_vec);
 
     for(size_t i = 0; i < cipher_vec.size(); i++)
@@ -61,6 +62,7 @@ void DES_CBC::decrypt(std::string &cipher, std::string init_vec)
         {
             init_vec = temp_vec;
         }
+
         temp_vec = cipher_vec[i];
         DES::decrypt(cipher_vec[i]);
         xor_iv(cipher_vec[i], init_vec);
