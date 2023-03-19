@@ -3,6 +3,7 @@
 #include "rsa/rsa.h"
 #include "sha256/sha256.h"
 #include "des/des.h"
+#include "des/des_ecb.h"
 #include "des3/des3.h"
 
 int main()
@@ -38,7 +39,7 @@ int main()
     des.decrypt(message);
     std::cout << message << std::endl;*/
 
-    std::string key_1 = "133457799bbcdff1";
+    /*std::string key_1 = "133457799bbcdff1";
     std::string key_2 = "100457722bbcddd1";
     std::string key_3 = "023457700bbdcff0";
     std::string keys[] = {key_1, key_2, key_3};
@@ -50,7 +51,18 @@ int main()
     des3.encrypt(message);
     std::cout << message << std::endl;
     des3.decrypt(message);
-    std::cout << message << std::endl;
+    std::cout << message << std::endl;*/
+
+    std::string message_test = "0123456789abcdef1123456789abcdef2123456789abcdef";
+
+    DES_ECB des_ecb;
+    des_ecb.generate_keys(key);
+
+    std::cout << message_test << std::endl;
+    des_ecb.encrypt(message_test);
+    std::cout << message_test << std::endl;
+    des_ecb.decrypt(message_test);
+    std::cout << message_test << std::endl;
     
     return 0;
 }
