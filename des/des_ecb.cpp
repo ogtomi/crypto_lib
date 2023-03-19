@@ -27,3 +27,21 @@ void DES_ECB::encrypt(std::string &message)
         message += message_vec[i];
     }
 }
+
+void DES_ECB::decrypt(std::string &cipher)
+{
+    std::vector<std::string> cipher_vec;
+    split_message(cipher, cipher_vec);
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        DES::decrypt(cipher_vec[i]);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
+}
