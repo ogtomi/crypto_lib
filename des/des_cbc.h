@@ -11,8 +11,8 @@ private:
     std::bitset<1> perm_subkeys[16][48];
 
 public:
-    void encrypt(std::string &message);
-    void decrypt(std::string &cipher);
+    void encrypt(std::string &message, std::string &init_vec);
+    void decrypt(std::string &cipher, std::string &init_vec);
 
 private:
     void split_message(const std::string &message, std::vector<std::string> &message_vec);
