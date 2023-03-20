@@ -4,6 +4,7 @@
 #include "sha256/sha256.h"
 #include "des/des.h"
 #include "des/des_ecb.h"
+#include "des/des_cbc.h"
 #include "des3/des3.h"
 
 int main()
@@ -54,14 +55,23 @@ int main()
     std::cout << message << std::endl;*/
 
     std::string message_test = "0123456789abcdef1123456789abcdef2123456789abcdef";
-
-    DES_ECB des_ecb;
+    std::string init_vec = "4bfa4d2304bb81fb";
+    /*DES_ECB des_ecb;
     des_ecb.generate_keys(key);
 
     std::cout << message_test << std::endl;
     des_ecb.encrypt(message_test);
     std::cout << message_test << std::endl;
     des_ecb.decrypt(message_test);
+    std::cout << message_test << std::endl;*/
+
+    DES_CBC des_cbc;
+    des_cbc.generate_keys(key);
+
+    std::cout << message_test << std::endl;
+    des_cbc.encrypt(message_test, init_vec);
+    std::cout << message_test << std::endl;
+    des_cbc.decrypt(message_test, init_vec);
     std::cout << message_test << std::endl;
     
     return 0;
