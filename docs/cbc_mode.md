@@ -24,3 +24,7 @@ $D_k$ - block decryption algorithm using key $k$
 ## Advantages of CBC
 
 The reatest advantage CBC has over [ECB](/docs/ecb_mobe.md) mode is that identical blocks do not have the same cipher. This is because the initialization vecotr addds a random factor to each block.
+
+## Disadvantages of CBC mode
+
+Encryption is not tolerant of block loses. This is because blocks depend on their previous blocks for encryption. So, if a block is lost, the encryption of all subsequent blocks will not be possible. This chained behaviour also means that the encryption of blocks needs to be done sequentially, not in parallel. However, these disadvantages do not extend to decryption, which can be done in parallel if all ciphertext blocks are available and can tolerate block losses.
