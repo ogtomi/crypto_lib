@@ -1,6 +1,6 @@
 # CBC
 
-CBC (Cipher-block chaining) is a block cipher mode that trumps the [ECB](/docs/ecb_mobe.md) mode hiding away patterns in the plaintext. CBC mode achieves this by XORing the first plaintext block with an initialization vecotr before encrypting it. CBC also involves block chaining as every subsequent block is XORed with the ciphertext of the previous block.
+CBC (Cipher-block chaining) is a block cipher mode that trumps the [ECB](/docs/ecb_mode.md) mode hiding away patterns in the plaintext. CBC mode achieves this by XORing the first plaintext block with an initialization vecotr before encrypting it. CBC also involves block chaining as every subsequent block is XORed with the ciphertext of the previous block.
 
 ## Encryption formula
 
@@ -23,7 +23,7 @@ $D_k$ - block decryption algorithm using key $k$
 
 ## Advantages of CBC
 
-The reatest advantage CBC has over [ECB](/docs/ecb_mobe.md) mode is that identical blocks do not have the same cipher. This is because the initialization vecotr addds a random factor to each block.
+The reatest advantage CBC has over [ECB](/docs/ecb_mode.md) mode is that identical blocks do not have the same cipher. This is because the initialization vecotr addds a random factor to each block.
 
 ## Disadvantages of CBC mode
 
