@@ -34,19 +34,36 @@ void AES_128::get_state_arr(const std::string &hex_str, uint8_t state_arr[][4])
     }
 }
 
+void AES_128::sub_bytes(uint8_t state_arr[][4])
+{
+    uint8_t row_value = 0;
+    uint8_t col_value = 0;
+
+    for(int col = 0; col < 4; col++)
+    {
+        for(int row = 0; row < 4; row++)
+        {
+            row_value = (state_arr[row][col] >> 4) & 0x0F;
+            col_value = state_arr[row][col] & 0x0F;
+            state_arr[row][col] = s_box[row_value][col_value];
+        }
+    }
+}
+
 void AES_128::run_testing(std::string &key, std::string &message)
 {
     ascii_to_hex(key);
     get_state_arr(key, state_arr);
 
-    for(auto const &bytes: state_arr)
+    /*(for(auto const &bytes: state_arr)
     {
         for(auto const &byte: bytes)
         {
             std::cout << std::hex << (unsigned) byte << " ";
         }
         std::cout << "\n";
-    }
+    }*/
+    sub_bytes(state_arr);
     std::cout << "\n";
     std::cout << key << std::endl;
 }
