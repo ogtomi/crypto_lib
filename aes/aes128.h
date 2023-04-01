@@ -10,19 +10,22 @@ class AES_128
 {
 private:
     uint8_t state_arr[4][4];
+    uint8_t key_arr[4][4];
 
 public:
     void run_testing(std::string &key, std::string &message);
 
 private:
     void ascii_to_hex(std::string &ascii_str);
-    void get_state_arr(const std::string &hex_str, uint8_t state_arr[][4]);
-    void sub_bytes(uint8_t state_arr[][4]);
+    void get_arr(const std::string &hex_str, uint8_t arr[][4]);
+    void sub_bytes(uint8_t arr[][4]);
+    void rot_word(uint8_t *word);
+    void add_round_key(uint8_t key_arr[][4]);
+    
     void shift_rows(uint8_t state_arr[][4]);
     void mix_columns(uint8_t state_arr[][4]);
-    void add_round_key(uint8_t state_arr[][4]);
 
-    uint8_t s_box [16][16] =
+    const uint8_t s_box [16][16] =
     {
         { 0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
         { 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4, 0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0},
