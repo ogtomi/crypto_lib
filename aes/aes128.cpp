@@ -34,6 +34,11 @@ void AES_128::get_arr(const std::string &hex_str, uint8_t arr[][4])
     }
 }
 
+void AES_128::uint8_to_32(const uint8_t *arr, uint32_t &word)
+{
+    word = ((arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0]);
+}
+
 void AES_128::sub_bytes(uint8_t arr[][4])
 {
     uint8_t row_value = 0;
@@ -50,52 +55,45 @@ void AES_128::sub_bytes(uint8_t arr[][4])
     }
 }
 
-void AES_128::rot_word(uint8_t *word)
+void AES_128::rot_word(uint8_t *byte_arr)
 {
-    uint8_t temp = word[0];
+    uint8_t temp = byte_arr[0];
 
     for(int i = 0; i < 3; i++)
     {
-        word[i] = word[i + 1];
+        byte_arr[i] = byte_arr[i + 1];
     }
 
-    word[3] = temp;
+    byte_arr[3] = temp;
 }
 
-void AES_128::sub_word(uint8_t *word)
+void AES_128::sub_word(uint8_t *byte_arr)
 {
     uint8_t row_value = 0;
     uint8_t col_value = 0;
 
     for(int i = 0; i < 4; i++)
     {
-        row_value = (word[i] >> 4) & 0x0F;
-        col_value = word[i] & 0x0F;
-        word[i] = s_box[row_value][col_value];
+        row_value = (byte_arr[i] >> 4) & 0x0F;
+        col_value = byte_arr[i] & 0x0F;
+        byte_arr[i] = s_box[row_value][col_value];
     }
 }
 
-void AES_128::add_round_key(uint8_t key_arr[][4])
+void AES_128::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
 {
+    uint32_t temp;
 
+    for(int i = 0; i < 4; i++)
+    {
+        uint8_to_32(key_arr[i], key_expanded[i]);
+    }
 }
-
-
 
 void AES_128::run_testing(std::string &key, std::string &message)
 {
     ascii_to_hex(key);
     get_arr(key, key_arr);
-    sub_bytes(key_arr);
-    
-    rot_word(key_arr[0]);
-    sub_word(key_arr[0]);
 
-    for(const auto &byte: key_arr[0])
-    {
-        std::cout << std::hex << (unsigned) byte;
-    }
-
-    std::cout << "\n";
-
+    expand_key(key_arr, key_expanded);
 }
