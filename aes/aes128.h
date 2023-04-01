@@ -12,6 +12,7 @@ private:
     uint8_t state_arr[4][4];
     uint8_t key_arr[4][4];
     uint32_t key_expanded[44];
+    uint8_t round_keys[11][4][4];
 
 public:
     void run_testing(std::string &key, std::string &message);
@@ -25,6 +26,7 @@ private:
     void rot_word(uint8_t *byte_arr);
     void sub_word(uint8_t *byte_arr);
     void expand_key(uint8_t arr[][4], uint32_t *key_expanded);
+    void get_round_keys();
     
     void shift_rows(uint8_t state_arr[][4]);
     void mix_columns(uint8_t state_arr[][4]);
