@@ -62,6 +62,19 @@ void AES_128::rot_word(uint8_t *word)
     word[3] = temp;
 }
 
+void AES_128::sub_word(uint8_t *word)
+{
+    uint8_t row_value = 0;
+    uint8_t col_value = 0;
+
+    for(int i = 0; i < 4; i++)
+    {
+        row_value = (word[i] >> 4) & 0x0F;
+        col_value = word[i] & 0x0F;
+        word[i] = s_box[row_value][col_value];
+    }
+}
+
 void AES_128::add_round_key(uint8_t key_arr[][4])
 {
 
@@ -75,14 +88,8 @@ void AES_128::run_testing(std::string &key, std::string &message)
     get_arr(key, key_arr);
     sub_bytes(key_arr);
     
-    for(const auto &byte: key_arr[0])
-    {
-        std::cout << std::hex << (unsigned) byte;
-    }
-
-    std::cout << "\n";
-
     rot_word(key_arr[0]);
+    sub_word(key_arr[0]);
 
     for(const auto &byte: key_arr[0])
     {
