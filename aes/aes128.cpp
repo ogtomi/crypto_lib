@@ -116,14 +116,27 @@ void AES_128::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
     }
 }
 
+void AES_128::get_round_keys()
+{
+    int k = 0;
+
+    for(int i = 0; i < 11; i++)
+    {
+        for(int row = 0; row < 4; row++)
+        {
+            uint32_to_8(round_keys[i][row], key_expanded[k]);
+            k++;
+        }
+    }
+}
+
 void AES_128::run_testing(std::string &key, std::string &message)
 {
     ascii_to_hex(key);
     get_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
+    get_round_keys();
 
-    for(auto const &key: key_expanded)
-    {
-        std::cout << std::hex << (unsigned)key << std::endl;
-    }
+    ascii_to_hex(message);
+    get_arr(message, state_arr);
 }
