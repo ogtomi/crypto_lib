@@ -162,26 +162,21 @@ void AES_128::sub_bytes(uint8_t arr[][4])
     }
 }
 
-void AES_128::shift_row(uint8_t *state_arr_row, int shift_no)
-{
-    for(int i = 0; i < shift_no; i++)
-    {
-        uint8_t temp = state_arr_row[0];
-
-        for(int j = 0; j < 3; j++)
-        {
-            state_arr_row[j] = state_arr_row[j + 1];
-        }
-
-        state_arr_row[3] = temp;
-    }
-}
-
 void AES_128::shift_rows(uint8_t state_arr[][4])
 {
     for(int row = 0; row < 4; row++)
     {
-        shift_row(state_arr[row], row);
+        for(int i = 0; i < row; i++)
+        {
+            uint8_t temp = state_arr[row][0];
+
+            for(int j = 0; j < 3; j++)
+            {
+                state_arr[row][j] = state_arr[row][j + 1];
+            }
+
+            state_arr[row][3] = temp;
+        }
     }
 }
 
