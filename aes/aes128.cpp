@@ -141,7 +141,7 @@ void AES_128::add_round_key(uint8_t state_arr[][4], int round)
     {
         for(int col = 0; col < 4; col++)
         {
-            state_arr[row][col] ^= round_keys[round][row][col];
+            state_arr[row][col] ^= round_keys[round][col][row];
         }
     }
 }
@@ -205,21 +205,8 @@ void AES_128::run_testing(std::string &key, std::string &message)
 
     ascii_to_hex(message);
     get_arr(message, state_arr);
-
+    
     add_round_key(state_arr, 0);
-
-    for(int k = 0; k < 11; k++)
-    {
-        for(int i = 0; i < 4; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                std::cout << std::hex << (unsigned)round_keys[k][i][j];
-            }
-        }
-        std::cout << "\n";
-    }
-    std::cout << "\n";
 
     for(int round = 1; round < 2; round++)
     {
