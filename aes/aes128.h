@@ -22,12 +22,12 @@ private:
     void get_arr(const std::string &hex_str, uint8_t arr[][4]);
     void uint8_to_32(const uint8_t *arr, uint32_t &word);
     void uint32_to_8(uint8_t *arr, const uint32_t &word);
-    void sub_bytes(uint8_t arr[][4]);
     void rot_word(uint8_t *byte_arr);
     void sub_word(uint8_t *byte_arr);
     void expand_key(uint8_t arr[][4], uint32_t *key_expanded);
     void get_round_keys();
-    
+    void sub_bytes(uint8_t arr[][4]);
+    void shift_row(uint8_t *state_arr_row, int shift_no);
     void shift_rows(uint8_t state_arr[][4]);
     void mix_columns(uint8_t state_arr[][4]);
 
