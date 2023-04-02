@@ -24,6 +24,27 @@ void AES_128::get_arr(const std::string &hex_str, uint8_t arr[][4])
         byte_str = hex_str.substr(i, 2);
         arr[row][col] = std::stoul(byte_str, 0, 16);
 
+        row++;
+
+        if(row == 4)
+        {
+            row = 0;
+            col++;
+        }
+    }
+}
+
+void AES_128::get_key_arr(const std::string &hex_str, uint8_t arr[][4])
+{   
+    std::string byte_str;
+    int row = 0;
+    int col = 0;
+
+    for(size_t i = 0; i < hex_str.size(); i+=2)
+    {   
+        byte_str = hex_str.substr(i, 2);
+        arr[row][col] = std::stoul(byte_str, 0, 16);
+
         col++;
 
         if(col == 4)
@@ -178,7 +199,7 @@ void AES_128::mix_columns(uint8_t state_arr[][4])
 void AES_128::run_testing(std::string &key, std::string &message)
 {
     ascii_to_hex(key);
-    get_arr(key, key_arr);
+    get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys();
 
@@ -186,6 +207,25 @@ void AES_128::run_testing(std::string &key, std::string &message)
     get_arr(message, state_arr);
 
     add_round_key(state_arr, 0);
+
+    for(int k = 0; k < 11; k++)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                std::cout << std::hex << (unsigned)round_keys[k][i][j];
+            }
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+
+    for(int round = 1; round < 2; round++)
+    {
+        sub_bytes(state_arr);
+        shift_rows(state_arr);
+    }
 
     for(int i = 0; i < 4; i++)
     {
