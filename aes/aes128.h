@@ -20,6 +20,7 @@ public:
 private:
     void ascii_to_hex(std::string &ascii_str);
     void get_arr(const std::string &hex_str, uint8_t arr[][4]);
+    void get_key_arr(const std::string &hex_str, uint8_t arr[][4]);
     void uint8_to_32(const uint8_t *arr, uint32_t &word);
     void uint32_to_8(uint8_t *arr, const uint32_t &word);
     void rot_word(uint8_t *byte_arr);
