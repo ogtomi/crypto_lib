@@ -6,7 +6,6 @@
 #include <sstream>
 #include <iomanip>
 
-
 class AES_128
 {
 private:
@@ -28,7 +27,6 @@ private:
     void get_round_keys(uint32_t *key_expanded);
     void add_round_key(uint8_t state_arr[][4], int round);
     void sub_bytes(uint8_t arr[][4]);
-    void shift_row(uint8_t *state_arr_row, int shift_no);
     void shift_rows(uint8_t state_arr[][4]);
     void mix_columns(uint8_t state_arr[][4]);
     void bytes_to_hex_str(std::string &message, uint8_t state_arr[][4]);
