@@ -208,31 +208,48 @@ void AES_128::mix_columns(uint8_t state_arr[][4])
     }
 }
 
-void AES_128::run_testing(std::string &key, std::string &message)
+void AES_128::generate_keys(std::string &key)
 {
     ascii_to_hex(key);
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys();
+}
 
+void AES_128::encrypt(std::string &message)
+{
     ascii_to_hex(message);
     get_arr(message, state_arr);
     
     add_round_key(state_arr, 0);
 
-    for(int round = 1; round < 2; round++)
+    for(int round = 1; round < 10; round++)
     {
         sub_bytes(state_arr);
         shift_rows(state_arr);
         mix_columns(state_arr);
+        add_round_key(state_arr, round);
     }
+
+    sub_bytes(state_arr);
+    shift_rows(state_arr);
+    add_round_key(state_arr, 10);
+
+    bytes_to_hex_str(message, state_arr);
+}
+
+void AES_128::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
+{
+    std::stringstream ss;
+    ss << std::setfill('0') << std::hex;
 
     for(int i = 0; i < 4; i++)
     {
         for(int j = 0; j < 4; j++)
         {
-            std::cout << std::hex << (unsigned)state_arr[i][j];
+            ss << std::setw(2) << std::hex << unsigned(state_arr[j][i]);
         }
-        std::cout << "\n";
     }
+
+    message = ss.str();
 }
