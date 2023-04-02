@@ -10,9 +10,6 @@
 class AES_128
 {
 private:
-    uint8_t state_arr[4][4];
-    uint8_t key_arr[4][4];
-    uint32_t key_expanded[44];
     uint8_t round_keys[11][4][4];
 
 public:
@@ -28,7 +25,7 @@ private:
     void rot_word(uint8_t *byte_arr);
     void sub_word(uint8_t *byte_arr);
     void expand_key(uint8_t arr[][4], uint32_t *key_expanded);
-    void get_round_keys();
+    void get_round_keys(uint32_t *key_expanded);
     void add_round_key(uint8_t state_arr[][4], int round);
     void sub_bytes(uint8_t arr[][4]);
     void shift_row(uint8_t *state_arr_row, int shift_no);
