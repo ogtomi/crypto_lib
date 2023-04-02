@@ -121,7 +121,7 @@ void AES_128::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
     }
 }
 
-void AES_128::get_round_keys()
+void AES_128::get_round_keys(uint32_t *key_expanded)
 {
     int k = 0;
 
@@ -210,14 +210,19 @@ void AES_128::mix_columns(uint8_t state_arr[][4])
 
 void AES_128::generate_keys(std::string &key)
 {
+    uint8_t key_arr[4][4];
+    uint32_t key_expanded[44];
+
     ascii_to_hex(key);
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
-    get_round_keys();
+    get_round_keys(key_expanded);
 }
 
 void AES_128::encrypt(std::string &message)
 {
+    uint8_t state_arr[4][4];
+    
     ascii_to_hex(message);
     get_arr(message, state_arr);
     
