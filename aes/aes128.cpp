@@ -187,12 +187,24 @@ void AES_128::shift_rows(uint8_t state_arr[][4])
 
 void AES_128::mix_columns(uint8_t state_arr[][4])
 {
-    for(int i = 0; i < 4; i++)
+    uint8_t a[4];
+    uint8_t b[4];
+    uint8_t h;
+
+    for(int col = 0; col < 4; col++)
     {
-        for(int j = 0; j < 4; j++)
+        for(int i = 0; i < 4; i++)
         {
-            state_arr[i][j] = 2;
+            a[i] = state_arr[i][col];
+            h = (state_arr[i][col] >> 7) & 0x01;
+            b[i] = state_arr[i][col] << 1;
+            b[i] ^= h * 0x1b;
         }
+
+        state_arr[0][col] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1];
+        state_arr[1][col] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2];
+        state_arr[2][col] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3];
+        state_arr[3][col] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0];
     }
 }
 
@@ -212,6 +224,7 @@ void AES_128::run_testing(std::string &key, std::string &message)
     {
         sub_bytes(state_arr);
         shift_rows(state_arr);
+        mix_columns(state_arr);
     }
 
     for(int i = 0; i < 4; i++)
