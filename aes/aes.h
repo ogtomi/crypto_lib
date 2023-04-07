@@ -5,22 +5,25 @@
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 enum class AES_key_length { AES_128, AES_192, AES_256};
 
 class AES
 {
 private:
-    uint8_t nk;
-    uint8_t nr;
-    uint8_t round_keys[11][4][4];
+    unsigned nk = 4;
+    unsigned nr = 10;
+    uint8_t*** round_keys = new uint8_t**[nr + 1];
 
 public:
     AES(const AES_key_length key_length = AES_key_length::AES_128);
+    ~AES();
     void generate_keys(std::string &key);
     void encrypt(std::string &message);
 
 private:
+    void init_round_keys();
     void ascii_to_hex(std::string &ascii_str);
     void get_state_arr(const std::string &hex_str, uint8_t state_arr[][4]);
     void get_key_arr(const std::string &hex_str, uint8_t key_arr[][4]);
