@@ -1,5 +1,25 @@
 #include "aes.h"
 
+AES::AES(const AES_key_length key_length)
+{
+    switch (key_length)
+    {
+        case AES_key_length::AES_128:
+            this->nk = 4;
+            this->nr = 10;
+            break;
+        
+        case AES_key_length::AES_192:
+            this->nk = 6;
+            this->nr = 12;
+            break;
+        
+        case AES_key_length::AES_256:
+            this->nk = 8;
+            this->nr = 14;
+    }
+}
+
 void AES::ascii_to_hex(std::string &ascii_str)
 {
     std::stringstream ss;
