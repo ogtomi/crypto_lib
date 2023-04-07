@@ -1,14 +1,18 @@
-#ifndef _AES_128_H_
-#define _AES_128_H_
+#ifndef _AES_H_
+#define _AES_H_
 
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 
-class AES_128
+enum class AES_key_length { AES_128, AES_192, AES_256};
+
+class AES
 {
 private:
+    uint8_t nk;
+    uint8_t nr;
     uint8_t round_keys[11][4][4];
 
 public:

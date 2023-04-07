@@ -1,6 +1,6 @@
-#include "aes128.h"
+#include "aes.h"
 
-void AES_128::ascii_to_hex(std::string &ascii_str)
+void AES::ascii_to_hex(std::string &ascii_str)
 {
     std::stringstream ss;
 
@@ -13,7 +13,7 @@ void AES_128::ascii_to_hex(std::string &ascii_str)
     ascii_str = ss.str();
 }
 
-void AES_128::get_state_arr(const std::string &hex_str, uint8_t state_arr[][4])
+void AES::get_state_arr(const std::string &hex_str, uint8_t state_arr[][4])
 {   
     std::string byte_str;
     int row = 0;
@@ -34,7 +34,7 @@ void AES_128::get_state_arr(const std::string &hex_str, uint8_t state_arr[][4])
     }
 }
 
-void AES_128::get_key_arr(const std::string &hex_str, uint8_t key_arr[][4])
+void AES::get_key_arr(const std::string &hex_str, uint8_t key_arr[][4])
 {   
     std::string byte_str;
     int row = 0;
@@ -55,12 +55,12 @@ void AES_128::get_key_arr(const std::string &hex_str, uint8_t key_arr[][4])
     }
 }
 
-void AES_128::uint8_to_32(const uint8_t *arr, uint32_t &word)
+void AES::uint8_to_32(const uint8_t *arr, uint32_t &word)
 {
     word = ((arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0]);
 }
 
-void AES_128::uint32_to_8(uint8_t *arr, const uint32_t &word)
+void AES::uint32_to_8(uint8_t *arr, const uint32_t &word)
 {
     arr[3] = (word & 0xFF000000) >> 24;
     arr[2] = (word & 0x00FF0000) >> 16;
@@ -68,7 +68,7 @@ void AES_128::uint32_to_8(uint8_t *arr, const uint32_t &word)
     arr[0] = (word & 0x000000FF);
 }
 
-void AES_128::rot_word(uint8_t *byte_arr)
+void AES::rot_word(uint8_t *byte_arr)
 {
     uint8_t temp = byte_arr[0];
 
@@ -80,7 +80,7 @@ void AES_128::rot_word(uint8_t *byte_arr)
     byte_arr[3] = temp;
 }
 
-void AES_128::sub_word(uint8_t *byte_arr)
+void AES::sub_word(uint8_t *byte_arr)
 {
     uint8_t row_value = 0;
     uint8_t col_value = 0;
@@ -93,7 +93,7 @@ void AES_128::sub_word(uint8_t *byte_arr)
     }
 }
 
-void AES_128::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
+void AES::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
 {
     uint32_t temp;
     uint8_t temp_arr[4];
@@ -121,7 +121,7 @@ void AES_128::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
     }
 }
 
-void AES_128::get_round_keys(uint32_t *key_expanded)
+void AES::get_round_keys(uint32_t *key_expanded)
 {
     int k = 0;
 
@@ -135,7 +135,7 @@ void AES_128::get_round_keys(uint32_t *key_expanded)
     }
 }
 
-void AES_128::add_round_key(uint8_t state_arr[][4], int round)
+void AES::add_round_key(uint8_t state_arr[][4], int round)
 {
     for(int row = 0; row < 4; row++)
     {
@@ -146,7 +146,7 @@ void AES_128::add_round_key(uint8_t state_arr[][4], int round)
     }
 }
 
-void AES_128::sub_bytes(uint8_t arr[][4])
+void AES::sub_bytes(uint8_t arr[][4])
 {
     uint8_t row_value = 0;
     uint8_t col_value = 0;
@@ -162,7 +162,7 @@ void AES_128::sub_bytes(uint8_t arr[][4])
     }
 }
 
-void AES_128::shift_rows(uint8_t state_arr[][4])
+void AES::shift_rows(uint8_t state_arr[][4])
 {
     for(int row = 0; row < 4; row++)
     {
@@ -180,7 +180,7 @@ void AES_128::shift_rows(uint8_t state_arr[][4])
     }
 }
 
-void AES_128::mix_columns(uint8_t state_arr[][4])
+void AES::mix_columns(uint8_t state_arr[][4])
 {
     uint8_t a[4];
     uint8_t b[4];
@@ -203,7 +203,7 @@ void AES_128::mix_columns(uint8_t state_arr[][4])
     }
 }
 
-void AES_128::generate_keys(std::string &key)
+void AES::generate_keys(std::string &key)
 {
     uint8_t key_arr[4][4];
     uint32_t key_expanded[44];
@@ -214,7 +214,7 @@ void AES_128::generate_keys(std::string &key)
     get_round_keys(key_expanded);
 }
 
-void AES_128::encrypt(std::string &message)
+void AES::encrypt(std::string &message)
 {
     uint8_t state_arr[4][4];
     
@@ -238,7 +238,7 @@ void AES_128::encrypt(std::string &message)
     bytes_to_hex_str(message, state_arr);
 }
 
-void AES_128::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
+void AES::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
 {
     std::stringstream ss;
     ss << std::setfill('0') << std::hex;
