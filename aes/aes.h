@@ -16,6 +16,7 @@ private:
     uint8_t round_keys[11][4][4];
 
 public:
+    AES(const AES_key_length key_length = AES_key_length::AES_128);
     void generate_keys(std::string &key);
     void encrypt(std::string &message);
 
