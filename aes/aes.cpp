@@ -2,7 +2,7 @@
 
 AES::AES(const AES_key_length key_length)
 {
-    switch (key_length)
+    switch(key_length)
     {
         case AES_key_length::AES_128:
             this->nk = 4;
@@ -17,6 +17,35 @@ AES::AES(const AES_key_length key_length)
         case AES_key_length::AES_256:
             this->nk = 8;
             this->nr = 14;
+            break;
+    }
+}
+
+AES::~AES()
+{
+    for(unsigned i = 0; i < (nr + 1); i++)
+    {
+        for(unsigned j = 0; j < nk; j++)
+        {
+            delete[] round_keys[i][j];
+        }
+
+        delete[] round_keys[i];
+    }
+
+    delete[] round_keys;
+}
+
+void AES::init_round_keys()
+{
+    for(unsigned i = 0; i < (nr + 1); i++)
+    {
+        round_keys[i] = new uint8_t*[nk];
+
+        for(unsigned j = 0; j < nk; j++)
+        {
+            round_keys[i][j] = new uint8_t[4];
+        }
     }
 }
 
@@ -228,6 +257,7 @@ void AES::generate_keys(std::string &key)
     uint8_t key_arr[4][4];
     uint32_t key_expanded[44];
 
+    init_round_keys();
     ascii_to_hex(key);
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
