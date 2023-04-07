@@ -121,12 +121,12 @@ void AES::rot_word(uint8_t *byte_arr)
 {
     uint8_t temp = byte_arr[0];
 
-    for(int i = 0; i < 3; i++)
+    for(unsigned i = 0; i < (nk - 1); i++)
     {
         byte_arr[i] = byte_arr[i + 1];
     }
 
-    byte_arr[3] = temp;
+    byte_arr[nk - 1] = temp;
 }
 
 void AES::sub_word(uint8_t *byte_arr)
@@ -134,7 +134,7 @@ void AES::sub_word(uint8_t *byte_arr)
     uint8_t row_value = 0;
     uint8_t col_value = 0;
 
-    for(int i = 0; i < 4; i++)
+    for(unsigned i = 0; i < nk; i++)
     {
         row_value = (byte_arr[i] >> 4) & 0x0F;
         col_value = byte_arr[i] & 0x0F;
@@ -145,14 +145,14 @@ void AES::sub_word(uint8_t *byte_arr)
 void AES::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
 {
     uint32_t temp;
-    uint8_t temp_arr[4];
+    uint8_t temp_arr[nk];
 
-    for(int i = 0; i < 4; i++)
+    for(unsigned i = 0; i < nk; i++)
     {
         uint8_to_32(key_arr[i], key_expanded[i]);
     }
 
-    for(int i = 4; i < 44; i++)
+    for(unsigned i = 4; i < ((nr + 1) * nk); i++)
     {
         temp = key_expanded[i - 1];
 
@@ -174,9 +174,9 @@ void AES::get_round_keys(uint32_t *key_expanded)
 {
     int k = 0;
 
-    for(int i = 0; i < 11; i++)
+    for(unsigned i = 0; i < (nr + 1); i++)
     {
-        for(int row = 0; row < 4; row++)
+        for(unsigned row = 0; row < nk; row++)
         {
             uint32_to_8(round_keys[i][row], key_expanded[k]);
             k++;
@@ -254,7 +254,7 @@ void AES::mix_columns(uint8_t state_arr[][4])
 
 void AES::generate_keys(std::string &key)
 {
-    uint8_t key_arr[4][4];
+    uint8_t key_arr[nk][4];
     uint32_t key_expanded[44];
 
     init_round_keys();
@@ -273,7 +273,7 @@ void AES::encrypt(std::string &message)
     
     add_round_key(state_arr, 0);
 
-    for(int round = 1; round < 10; round++)
+    for(unsigned round = 1; round < nr; round++)
     {
         sub_bytes(state_arr);
         shift_rows(state_arr);
@@ -283,7 +283,7 @@ void AES::encrypt(std::string &message)
 
     sub_bytes(state_arr);
     shift_rows(state_arr);
-    add_round_key(state_arr, 10);
+    add_round_key(state_arr, nr);
 
     bytes_to_hex_str(message, state_arr);
 }
