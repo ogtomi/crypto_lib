@@ -10,8 +10,9 @@
 
 int main()
 {
-    std::string key_192 = "8e73b0f7da0e6452c810f32b809079e562f8ead2522c6b7b";
-    std::string key_128 = "2b7e151628aed2a6abf7158809cf4f3c";
+    std::string key_128 = "000102030405060708090a0b0c0d0e0f";
+    std::string key_192 = "000102030405060708090a0b0c0d0e0f1011121314151617";
+    std::string key_256 = "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f";
     std::string message = "00112233445566778899aabbccddeeff";
 
     AES aes(AES_key_length::AES_128);
