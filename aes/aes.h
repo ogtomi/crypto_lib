@@ -31,8 +31,8 @@ private:
     void uint32_to_8(uint8_t *arr, const uint32_t &word);
     void rot_word(uint8_t *byte_arr);
     void sub_word(uint8_t *byte_arr);
-    void expand_key(uint8_t arr[][4], uint32_t *key_expanded);
-    void get_round_keys(uint32_t *key_expanded);
+    void expand_key(uint8_t arr[][4], uint8_t key_expanded[][4]);
+    void get_round_keys(uint8_t key_expanded[][4]);
     void add_round_key(uint8_t state_arr[][4], int round);
     void sub_bytes(uint8_t arr[][4]);
     void shift_rows(uint8_t state_arr[][4]);
