@@ -1,30 +1,36 @@
-#ifndef _AES_128_H_
-#define _AES_128_H_
+#ifndef _AES_H_
+#define _AES_H_
 
 #include <string>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
-class AES_128
+enum class AES_key_length { AES_128, AES_192, AES_256};
+
+class AES
 {
 private:
-    uint8_t round_keys[11][4][4];
+    int nk;
+    int nr;
+    uint8_t*** round_keys = new uint8_t**[nr + 1];
 
 public:
+    AES(const AES_key_length key_length = AES_key_length::AES_128);
+    ~AES();
     void generate_keys(std::string &key);
     void encrypt(std::string &message);
 
 private:
+    void init_round_keys();
     void ascii_to_hex(std::string &ascii_str);
     void get_state_arr(const std::string &hex_str, uint8_t state_arr[][4]);
     void get_key_arr(const std::string &hex_str, uint8_t key_arr[][4]);
-    void uint8_to_32(const uint8_t *arr, uint32_t &word);
-    void uint32_to_8(uint8_t *arr, const uint32_t &word);
     void rot_word(uint8_t *byte_arr);
     void sub_word(uint8_t *byte_arr);
-    void expand_key(uint8_t arr[][4], uint32_t *key_expanded);
-    void get_round_keys(uint32_t *key_expanded);
+    void expand_key(uint8_t arr[][4], uint8_t key_expanded[][4]);
+    void get_round_keys(uint8_t key_expanded[][4]);
     void add_round_key(uint8_t state_arr[][4], int round);
     void sub_bytes(uint8_t arr[][4]);
     void shift_rows(uint8_t state_arr[][4]);
