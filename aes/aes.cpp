@@ -121,12 +121,12 @@ void AES::rot_word(uint8_t *byte_arr)
 {
     uint8_t temp = byte_arr[0];
 
-    for(int i = 0; i < (nk - 1); i++)
+    for(int i = 0; i < 4; i++)
     {
         byte_arr[i] = byte_arr[i + 1];
     }
 
-    byte_arr[nk - 1] = temp;
+    byte_arr[3] = temp;
 }
 
 void AES::sub_word(uint8_t *byte_arr)
@@ -142,46 +142,45 @@ void AES::sub_word(uint8_t *byte_arr)
     }
 }
 
-void AES::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
+void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
 {
     uint32_t temp;
     uint8_t temp_arr[4];
 
     for(int i = 0; i < nk; i++)
     {   
-        uint8_to_32(key_arr[i], key_expanded[i]);
+        for(int j = 0; j < 4; j++)
+        {
+            key_expanded[i][j] = key_arr[i][j];
+        }
     }
 
     for(int i = nk; i < (nr + 1) * 4; i++)
     {
-        temp = key_expanded[i - 1];
+        for(int j = 0; j < 4; j++)
+        {
+            temp_arr[j] = key_expanded[i - 1][j];
+        }
         
         if(i % nk == 0)
         {
-            uint32_to_8(temp_arr, temp);
             rot_word(temp_arr);
             sub_word(temp_arr);
-            uint8_to_32(temp_arr, temp);
-
-            temp ^= rcon[i / 4];
+            temp_arr[0] ^= rcon[i / nk];
         }
         else if (nk > 6 && i % nk == 4)
         {
-            uint32_to_8(temp_arr, temp);
             sub_word(temp_arr);
-            uint8_to_32(temp_arr, temp);
         }
         
-        key_expanded[i] = key_expanded[i - nk] ^ temp;
-    }
-    for(int i = 0; i < (nr + 1) * 4; i++)
-    {
-        std::cout << std::hex << (unsigned)key_expanded[i] << std::endl;
-        std::cout << std::dec << i << std::endl;
+        for(int j = 0; j < 4; j++)
+        {
+            key_expanded[i][j] = key_expanded[i - nk][j] ^ temp_arr[j];
+        }
     }
 }
 
-void AES::get_round_keys(uint32_t *key_expanded)
+void AES::get_round_keys(uint8_t key_expanded[][4])
 {
     int k = 0;
 
@@ -189,7 +188,10 @@ void AES::get_round_keys(uint32_t *key_expanded)
     {
         for(int row = 0; row < nk; row++)
         {
-            uint32_to_8(round_keys[i][row], key_expanded[k]);
+            for(int byte = 0; byte < 4; byte++)
+            {
+                round_keys[i][row][byte] = key_expanded[k][byte];
+            }
             k++;
         }
     }
@@ -266,7 +268,7 @@ void AES::mix_columns(uint8_t state_arr[][4])
 void AES::generate_keys(std::string &key)
 {
     uint8_t key_arr[nk][4];
-    uint32_t key_expanded[(nr + 1) * 4];
+    uint8_t key_expanded[(nr + 1) * 4][4];
 
     init_round_keys();
     //ascii_to_hex(key);
