@@ -23,18 +23,26 @@ public:
     void encrypt(std::string &message);
 
 private:
-    void init_round_keys();
     void ascii_to_hex(std::string &ascii_str);
-    void get_state_arr(const std::string &hex_str, uint8_t state_arr[][4]);
+    
+    // KEY GENERATION FUNCTIONS
+    void init_round_keys();
     void get_key_arr(const std::string &hex_str, uint8_t key_arr[][4]);
-    void rot_word(uint8_t *byte_arr);
-    void sub_word(uint8_t *byte_arr);
     void expand_key(uint8_t arr[][4], uint8_t key_expanded[][4]);
     void get_round_keys(uint8_t key_expanded[][4]);
+    void rot_word(uint8_t *byte_arr);
+    void sub_word(uint8_t *byte_arr);
+    void add_rcon(uint8_t *byte_arr, int round);
+
+    // MESSAGE CONVERSION FUNCTIONS
+    void get_state_arr(const std::string &hex_str, uint8_t state_arr[][4]);
+
+    // ENCRYPTION
     void add_round_key(uint8_t state_arr[][4], int round);
     void sub_bytes(uint8_t arr[][4]);
     void shift_rows(uint8_t state_arr[][4]);
     void mix_columns(uint8_t state_arr[][4]);
+
     void bytes_to_hex_str(std::string &message, uint8_t state_arr[][4]);
 
     const uint8_t s_box [16][16] =
