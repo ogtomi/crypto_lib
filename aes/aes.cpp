@@ -23,9 +23,9 @@ AES::AES(const AES_key_length key_length)
 
 AES::~AES()
 {
-    for(unsigned i = 0; i < (nr + 1); i++)
+    for(int i = 0; i < (nr + 1); i++)
     {
-        for(unsigned j = 0; j < nk; j++)
+        for(int j = 0; j < nk; j++)
         {
             delete[] round_keys[i][j];
         }
@@ -38,11 +38,11 @@ AES::~AES()
 
 void AES::init_round_keys()
 {
-    for(unsigned i = 0; i < (nr + 1); i++)
+    for(int i = 0; i < (nr + 1); i++)
     {
         round_keys[i] = new uint8_t*[nk];
 
-        for(unsigned j = 0; j < nk; j++)
+        for(int j = 0; j < nk; j++)
         {
             round_keys[i][j] = new uint8_t[4];
         }
@@ -56,7 +56,7 @@ void AES::ascii_to_hex(std::string &ascii_str)
     for(size_t i = 0; i < ascii_str.size(); i++)
     {
         ss.width(2);
-        ss << std::hex << (unsigned int) ascii_str[i];
+        ss << std::hex << (unsigned) ascii_str[i];
     }
 
     ascii_str = ss.str();
@@ -88,7 +88,7 @@ void AES::get_key_arr(const std::string &hex_str, uint8_t key_arr[][4])
     std::string byte_str;
     int row = 0;
     int col = 0;
-
+    
     for(size_t i = 0; i < hex_str.size(); i+=2)
     {   
         byte_str = hex_str.substr(i, 2);
@@ -121,7 +121,7 @@ void AES::rot_word(uint8_t *byte_arr)
 {
     uint8_t temp = byte_arr[0];
 
-    for(unsigned i = 0; i < (nk - 1); i++)
+    for(int i = 0; i < (nk - 1); i++)
     {
         byte_arr[i] = byte_arr[i + 1];
     }
@@ -134,7 +134,7 @@ void AES::sub_word(uint8_t *byte_arr)
     uint8_t row_value = 0;
     uint8_t col_value = 0;
 
-    for(unsigned i = 0; i < nk; i++)
+    for(int i = 0; i < 4; i++)
     {
         row_value = (byte_arr[i] >> 4) & 0x0F;
         col_value = byte_arr[i] & 0x0F;
@@ -145,18 +145,18 @@ void AES::sub_word(uint8_t *byte_arr)
 void AES::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
 {
     uint32_t temp;
-    uint8_t temp_arr[nk];
+    uint8_t temp_arr[4];
 
-    for(unsigned i = 0; i < nk; i++)
-    {
+    for(int i = 0; i < nk; i++)
+    {   
         uint8_to_32(key_arr[i], key_expanded[i]);
     }
 
-    for(unsigned i = 4; i < ((nr + 1) * nk); i++)
+    for(int i = nk; i < (nr + 1) * 4; i++)
     {
         temp = key_expanded[i - 1];
-
-        if(i % 4 == 0)
+        
+        if(i % nk == 0)
         {
             uint32_to_8(temp_arr, temp);
             rot_word(temp_arr);
@@ -165,8 +165,19 @@ void AES::expand_key(uint8_t key_arr[][4], uint32_t *key_expanded)
 
             temp ^= rcon[i / 4];
         }
-
-        key_expanded[i] = key_expanded[i - 4] ^ temp; 
+        else if (nk > 6 && i % nk == 4)
+        {
+            uint32_to_8(temp_arr, temp);
+            sub_word(temp_arr);
+            uint8_to_32(temp_arr, temp);
+        }
+        
+        key_expanded[i] = key_expanded[i - nk] ^ temp;
+    }
+    for(int i = 0; i < (nr + 1) * 4; i++)
+    {
+        std::cout << std::hex << (unsigned)key_expanded[i] << std::endl;
+        std::cout << std::dec << i << std::endl;
     }
 }
 
@@ -174,9 +185,9 @@ void AES::get_round_keys(uint32_t *key_expanded)
 {
     int k = 0;
 
-    for(unsigned i = 0; i < (nr + 1); i++)
+    for(int i = 0; i < (nr + 1); i++)
     {
-        for(unsigned row = 0; row < nk; row++)
+        for(int row = 0; row < nk; row++)
         {
             uint32_to_8(round_keys[i][row], key_expanded[k]);
             k++;
@@ -255,10 +266,10 @@ void AES::mix_columns(uint8_t state_arr[][4])
 void AES::generate_keys(std::string &key)
 {
     uint8_t key_arr[nk][4];
-    uint32_t key_expanded[44];
+    uint32_t key_expanded[(nr + 1) * 4];
 
     init_round_keys();
-    ascii_to_hex(key);
+    //ascii_to_hex(key);
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys(key_expanded);
@@ -268,12 +279,11 @@ void AES::encrypt(std::string &message)
 {
     uint8_t state_arr[4][4];
     
-    ascii_to_hex(message);
+    //ascii_to_hex(message);
     get_state_arr(message, state_arr);
-    
     add_round_key(state_arr, 0);
 
-    for(unsigned round = 1; round < nr; round++)
+    for(int round = 1; round < nr; round++)
     {
         sub_bytes(state_arr);
         shift_rows(state_arr);
@@ -297,7 +307,7 @@ void AES::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
     {
         for(int j = 0; j < 4; j++)
         {
-            ss << std::setw(2) << std::hex << unsigned(state_arr[j][i]);
+            ss << std::setw(2) << std::hex << (unsigned)state_arr[j][i];
         }
     }
 
