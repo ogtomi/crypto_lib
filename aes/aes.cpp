@@ -144,7 +144,6 @@ void AES::sub_word(uint8_t *byte_arr)
 
 void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
 {
-    uint32_t temp;
     uint8_t temp_arr[4];
 
     for(int i = 0; i < nk; i++)
@@ -186,7 +185,7 @@ void AES::get_round_keys(uint8_t key_expanded[][4])
 
     for(int i = 0; i < (nr + 1); i++)
     {
-        for(int row = 0; row < nk; row++)
+        for(int row = 0; row < 4; row++)
         {
             for(int byte = 0; byte < 4; byte++)
             {
