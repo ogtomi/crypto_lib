@@ -104,19 +104,6 @@ void AES::get_key_arr(const std::string &hex_str, uint8_t key_arr[][4])
     }
 }
 
-void AES::uint8_to_32(const uint8_t *arr, uint32_t &word)
-{
-    word = ((arr[3] << 24) | (arr[2] << 16) | (arr[1] << 8) | arr[0]);
-}
-
-void AES::uint32_to_8(uint8_t *arr, const uint32_t &word)
-{
-    arr[3] = (word & 0xFF000000) >> 24;
-    arr[2] = (word & 0x00FF0000) >> 16;
-    arr[1] = (word & 0x0000FF00) >> 8;
-    arr[0] = (word & 0x000000FF);
-}
-
 void AES::rot_word(uint8_t *byte_arr)
 {
     uint8_t temp = byte_arr[0];
@@ -270,7 +257,6 @@ void AES::generate_keys(std::string &key)
     uint8_t key_expanded[(nr + 1) * 4][4];
 
     init_round_keys();
-    //ascii_to_hex(key);
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys(key_expanded);
@@ -280,7 +266,6 @@ void AES::encrypt(std::string &message)
 {
     uint8_t state_arr[4][4];
     
-    //ascii_to_hex(message);
     get_state_arr(message, state_arr);
     add_round_key(state_arr, 0);
 
