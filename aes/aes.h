@@ -12,8 +12,8 @@ enum class AES_key_length { AES_128, AES_192, AES_256};
 class AES
 {
 private:
-    int nk = 4;
-    int nr = 10;
+    int nk;
+    int nr;
     uint8_t*** round_keys = new uint8_t**[nr + 1];
 
 public:
