@@ -129,6 +129,11 @@ void AES::sub_word(uint8_t *byte_arr)
     }
 }
 
+void AES::add_rcon(uint8_t *byte_arr, int round)
+{
+    byte_arr[0] ^= rcon[round / nk];
+}
+
 void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
 {
     uint8_t temp_arr[4];
@@ -152,7 +157,7 @@ void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
         {
             rot_word(temp_arr);
             sub_word(temp_arr);
-            temp_arr[0] ^= rcon[i / nk];
+            add_rcon(temp_arr, i);
         }
         else if (nk > 6 && i % nk == 4)
         {
