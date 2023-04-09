@@ -46,7 +46,7 @@ private:
     // DECRYPTION
     void inv_sub_bytes(uint8_t state_arr[][4]);
     void inv_shift_rows(uint8_t state_arr[][4]);
-    void inv_mix_columns(uint8_t state_arr [][4]);
+    void inv_mix_columns(uint8_t state_arr[][4]);
 
     void bytes_to_hex_str(std::string &message, uint8_t state_arr[][4]);
 
