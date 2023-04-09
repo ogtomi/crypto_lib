@@ -205,7 +205,7 @@ void AES::add_round_key(uint8_t state_arr[][4], int round)
     }
 }
 
-void AES::sub_bytes(uint8_t arr[][4])
+void AES::sub_bytes(uint8_t state_arr[][4])
 {
     uint8_t row_value = 0;
     uint8_t col_value = 0;
@@ -214,9 +214,9 @@ void AES::sub_bytes(uint8_t arr[][4])
     {
         for(int row = 0; row < 4; row++)
         {
-            row_value = (arr[row][col] >> 4) & 0x0F;
-            col_value = arr[row][col] & 0x0F;
-            arr[row][col] = s_box[row_value][col_value];
+            row_value = (state_arr[row][col] >> 4) & 0x0F;
+            col_value = state_arr[row][col] & 0x0F;
+            state_arr[row][col] = s_box[row_value][col_value];
         }
     }
 }
