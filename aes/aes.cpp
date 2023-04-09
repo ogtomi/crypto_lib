@@ -306,6 +306,37 @@ void AES::inv_shift_rows(uint8_t state_arr[][4])
     }
 }
 
+void AES::inv_mix_columns(uint8_t state_arr[][4])
+{
+    uint8_t a[4];
+    uint8_t b[4];
+    uint8_t c[4];
+    uint8_t d[4];
+    uint8_t h;
+
+    for(int col = 0; col < 4; col++)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            a[i] = state_arr[i][col];
+
+            h = (state_arr[i][col] >> 7);
+            b[i] = (state_arr[i][col] << 1) ^ (h & 0x1b);
+
+            h = b[i] >> 7;
+            c[i] = (b[i] << 1) ^ (h & 0x1b);
+
+            h = c[i] >> 7;
+            d[i] = (c[i] << 1) ^ (h ^ 0x1b) ^ a[i];
+        }
+
+        state_arr[0][col] = (d[0] ^ c[0] ^ b[0] ^ a[0]) ^ (d[1] ^ b[1]) ^ (d[2] ^ c[2]) ^ d[3];
+        state_arr[1][col] = d[0] ^ (d[1] ^ c[1] ^ b[1] ^ a[1]) ^ (d[2] ^ b[2]) ^ (d[3] ^ c[3]);
+        state_arr[2][col] = (d[0] ^ c[0]) ^ d[1] ^ (d[2] ^ c[2] ^ b[2] ^ a[2]) ^ (d[3] ^ b[3]);
+        state_arr[3][col] = (d[0] ^ b[0]) ^ (d[1] ^ c[1]) ^ d[2] ^ (d[3] ^ c[3] ^ b[3] ^ a[3]);
+    }
+}
+
 void AES::encrypt(std::string &message)
 {
     uint8_t state_arr[4][4];
@@ -326,6 +357,28 @@ void AES::encrypt(std::string &message)
     add_round_key(state_arr, nr);
 
     bytes_to_hex_str(message, state_arr);
+}
+
+void AES::decrypt(std::string &cipher)
+{
+    uint8_t state_arr[4][4];
+    
+    get_state_arr(cipher, state_arr);
+    add_round_key(state_arr, nr);
+
+    for(int round = (nr - 1); round > 0; round--)
+    {
+        inv_sub_bytes(state_arr);
+        inv_shift_rows(state_arr);
+        inv_mix_columns(state_arr);
+        add_round_key(state_arr, round);
+    }
+
+    inv_sub_bytes(state_arr);
+    inv_shift_rows(state_arr);
+    add_round_key(state_arr, 0);
+
+    bytes_to_hex_str(cipher, state_arr);
 }
 
 void AES::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
