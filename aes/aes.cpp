@@ -272,6 +272,40 @@ void AES::generate_keys(std::string &key)
     get_round_keys(key_expanded);
 }
 
+void AES::inv_sub_bytes(uint8_t state_arr[][4])
+{
+    uint8_t row_value = 0;
+    uint8_t col_value = 0;
+
+    for(int col = 0; col < 4; col++)
+    {
+        for(int row = 0; row < 4; row++)
+        {
+            row_value = (state_arr[row][col] >> 4) & 0x0F;
+            col_value = state_arr[row][col] & 0x0F;
+            state_arr[row][col] = inv_s_box[row_value][col_value];
+        }
+    }
+}
+
+void AES::inv_shift_rows(uint8_t state_arr[][4])
+{   
+    for(int row = 0; row < 4; row++)
+    {
+        for(int i = 0; i < row; i++)
+        {
+            uint8_t temp = state_arr[row][3];
+
+            for(int j = 3; j > 0; j--)
+            {
+                state_arr[row][j] = state_arr[row][j - 1];
+            }
+
+            state_arr[row][0] = temp;
+        }
+    }
+}
+
 void AES::encrypt(std::string &message)
 {
     uint8_t state_arr[4][4];
