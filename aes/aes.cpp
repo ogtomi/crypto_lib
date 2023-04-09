@@ -19,13 +19,25 @@ AES::AES(const AES_key_length key_length)
             this->nr = 14;
             break;
     }
+
+    round_keys = new uint8_t**[nr + 1];
+    
+    for(int i = 0; i < (nr + 1); i++)
+    {
+        round_keys[i] = new uint8_t*[4];
+
+        for(int j = 0; j < 4; j++)
+        {
+            round_keys[i][j] = new uint8_t[4];
+        }
+    }
 }
 
 AES::~AES()
 {
     for(int i = 0; i < (nr + 1); i++)
     {
-        for(int j = 0; j < nk; j++)
+        for(int j = 0; j < 4; j++)
         {
             delete[] round_keys[i][j];
         }
@@ -34,19 +46,6 @@ AES::~AES()
     }
 
     delete[] round_keys;
-}
-
-void AES::init_round_keys()
-{
-    for(int i = 0; i < (nr + 1); i++)
-    {
-        round_keys[i] = new uint8_t*[nk];
-
-        for(int j = 0; j < nk; j++)
-        {
-            round_keys[i][j] = new uint8_t[4];
-        }
-    }
 }
 
 void AES::ascii_to_hex(std::string &ascii_str)
@@ -129,6 +128,18 @@ void AES::sub_word(uint8_t *byte_arr)
     }
 }
 
+void AES::add_rcon(uint8_t *byte_arr, int round)
+{
+    uint8_t rcon = 0x01; 
+    
+    for(int i = 0; i < (round - 1); i++)
+    {
+        rcon = (rcon << 1) ^ (((rcon >> 7) & 0x01) * 0x011b);
+    }
+    
+    byte_arr[0] ^= rcon;
+}
+
 void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
 {
     uint8_t temp_arr[4];
@@ -152,7 +163,7 @@ void AES::expand_key(uint8_t key_arr[][4], uint8_t key_expanded[][4])
         {
             rot_word(temp_arr);
             sub_word(temp_arr);
-            temp_arr[0] ^= rcon[i / nk];
+            add_rcon(temp_arr, (i / nk));
         }
         else if (nk > 6 && i % nk == 4)
         {
@@ -256,7 +267,6 @@ void AES::generate_keys(std::string &key)
     uint8_t key_arr[nk][4];
     uint8_t key_expanded[(nr + 1) * 4][4];
 
-    init_round_keys();
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys(key_expanded);
