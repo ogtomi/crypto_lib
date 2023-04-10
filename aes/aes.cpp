@@ -370,23 +370,7 @@ void AES::decrypt(std::string &cipher)
         inv_sub_bytes(state_arr);
         inv_shift_rows(state_arr);
         add_round_key(state_arr, round);
-        for(int i = 0; i < 4; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                std::cout << std::hex << (unsigned) state_arr[j][i];
-            }
-        }
-        std::cout << "\n";
         inv_mix_columns(state_arr);
-        for(int i = 0; i < 4; i++)
-        {
-            for(int j = 0; j < 4; j++)
-            {
-                std::cout << std::hex << (unsigned) state_arr[j][i];
-            }
-        }
-        std::cout << "\n";
     }
 
     inv_sub_bytes(state_arr);
