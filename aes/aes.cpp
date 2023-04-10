@@ -251,14 +251,13 @@ void AES::mix_columns(uint8_t state_arr[][4])
         {
             a[i] = state_arr[i][col];
             h = (state_arr[i][col] >> 7) & 0x01;
-            b[i] = state_arr[i][col] << 1;
-            b[i] ^= h * 0x1b;
+            b[i] = (state_arr[i][col] << 1) ^ (h * 0x1b);
         }
 
-        state_arr[0][col] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1];
-        state_arr[1][col] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2];
-        state_arr[2][col] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3];
-        state_arr[3][col] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0];
+        state_arr[0][col] = b[0] ^ b[1] ^ a[1] ^ a[2] ^ a[3];
+        state_arr[1][col] = a[0] ^ b[1] ^ b[2] ^ a[2] ^ a[3];
+        state_arr[2][col] = a[0] ^ a[1] ^ b[2] ^ b[3] ^ a[3];
+        state_arr[3][col] = b[0] ^ a[0] ^ a[1] ^ a[2] ^ b[3];
     }
 }
 
@@ -320,14 +319,14 @@ void AES::inv_mix_columns(uint8_t state_arr[][4])
         {
             a[i] = state_arr[i][col];
 
-            h = (state_arr[i][col] >> 7);
-            b[i] = (state_arr[i][col] << 1) ^ (h & 0x1b);
+            h = (a[i] >> 7) ^ 0x01;
+            b[i] = (a[i] << 1) ^ (h * 0x1b);
 
-            h = b[i] >> 7;
-            c[i] = (b[i] << 1) ^ (h & 0x1b);
+            h = (b[i] >> 7) ^ 0x01;
+            c[i] = (b[i] << 1) ^ (h * 0x1b);
 
-            h = c[i] >> 7;
-            d[i] = (c[i] << 1) ^ (h ^ 0x1b) ^ a[i];
+            h = (c[i] >> 7) ^ 0x01;
+            d[i] = (c[i] << 1) ^ a[i] ^ (h * 0x1b) ;
         }
 
         state_arr[0][col] = (d[0] ^ c[0] ^ b[0] ^ a[0]) ^ (d[1] ^ b[1]) ^ (d[2] ^ c[2]) ^ d[3];
@@ -370,8 +369,24 @@ void AES::decrypt(std::string &cipher)
     {
         inv_sub_bytes(state_arr);
         inv_shift_rows(state_arr);
-        inv_mix_columns(state_arr);
         add_round_key(state_arr, round);
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                std::cout << std::hex << (unsigned) state_arr[j][i];
+            }
+        }
+        std::cout << "\n";
+        inv_mix_columns(state_arr);
+        for(int i = 0; i < 4; i++)
+        {
+            for(int j = 0; j < 4; j++)
+            {
+                std::cout << std::hex << (unsigned) state_arr[j][i];
+            }
+        }
+        std::cout << "\n";
     }
 
     inv_sub_bytes(state_arr);
