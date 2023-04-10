@@ -205,7 +205,7 @@ void AES::add_round_key(uint8_t state_arr[][4], int round)
     }
 }
 
-void AES::sub_bytes(uint8_t arr[][4])
+void AES::sub_bytes(uint8_t state_arr[][4])
 {
     uint8_t row_value = 0;
     uint8_t col_value = 0;
@@ -214,9 +214,9 @@ void AES::sub_bytes(uint8_t arr[][4])
     {
         for(int row = 0; row < 4; row++)
         {
-            row_value = (arr[row][col] >> 4) & 0x0F;
-            col_value = arr[row][col] & 0x0F;
-            arr[row][col] = s_box[row_value][col_value];
+            row_value = (state_arr[row][col] >> 4) & 0x0F;
+            col_value = state_arr[row][col] & 0x0F;
+            state_arr[row][col] = s_box[row_value][col_value];
         }
     }
 }
@@ -251,14 +251,13 @@ void AES::mix_columns(uint8_t state_arr[][4])
         {
             a[i] = state_arr[i][col];
             h = (state_arr[i][col] >> 7) & 0x01;
-            b[i] = state_arr[i][col] << 1;
-            b[i] ^= h * 0x1b;
+            b[i] = (state_arr[i][col] << 1) ^ (h * 0x1b);
         }
 
-        state_arr[0][col] = b[0] ^ a[3] ^ a[2] ^ b[1] ^ a[1];
-        state_arr[1][col] = b[1] ^ a[0] ^ a[3] ^ b[2] ^ a[2];
-        state_arr[2][col] = b[2] ^ a[1] ^ a[0] ^ b[3] ^ a[3];
-        state_arr[3][col] = b[3] ^ a[2] ^ a[1] ^ b[0] ^ a[0];
+        state_arr[0][col] = b[0] ^ b[1] ^ a[1] ^ a[2] ^ a[3];
+        state_arr[1][col] = a[0] ^ b[1] ^ b[2] ^ a[2] ^ a[3];
+        state_arr[2][col] = a[0] ^ a[1] ^ b[2] ^ b[3] ^ a[3];
+        state_arr[3][col] = b[0] ^ a[0] ^ a[1] ^ a[2] ^ b[3];
     }
 }
 
@@ -270,6 +269,71 @@ void AES::generate_keys(std::string &key)
     get_key_arr(key, key_arr);
     expand_key(key_arr, key_expanded);
     get_round_keys(key_expanded);
+}
+
+void AES::inv_sub_bytes(uint8_t state_arr[][4])
+{
+    uint8_t row_value = 0;
+    uint8_t col_value = 0;
+
+    for(int col = 0; col < 4; col++)
+    {
+        for(int row = 0; row < 4; row++)
+        {
+            row_value = (state_arr[row][col] >> 4) & 0x0F;
+            col_value = state_arr[row][col] & 0x0F;
+            state_arr[row][col] = inv_s_box[row_value][col_value];
+        }
+    }
+}
+
+void AES::inv_shift_rows(uint8_t state_arr[][4])
+{   
+    for(int row = 0; row < 4; row++)
+    {
+        for(int i = 0; i < row; i++)
+        {
+            uint8_t temp = state_arr[row][3];
+
+            for(int j = 3; j > 0; j--)
+            {
+                state_arr[row][j] = state_arr[row][j - 1];
+            }
+
+            state_arr[row][0] = temp;
+        }
+    }
+}
+
+void AES::inv_mix_columns(uint8_t state_arr[][4])
+{
+    uint8_t a[4];
+    uint8_t b[4];
+    uint8_t c[4];
+    uint8_t d[4];
+    uint8_t h;
+
+    for(int col = 0; col < 4; col++)
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            a[i] = state_arr[i][col];
+
+            h = (a[i] >> 7) ^ 0x01;
+            b[i] = (a[i] << 1) ^ (h * 0x1b);
+
+            h = (b[i] >> 7) ^ 0x01;
+            c[i] = (b[i] << 1) ^ (h * 0x1b);
+
+            h = (c[i] >> 7) ^ 0x01;
+            d[i] = (c[i] << 1) ^ a[i] ^ (h * 0x1b) ;
+        }
+
+        state_arr[0][col] = (d[0] ^ c[0] ^ b[0] ^ a[0]) ^ (d[1] ^ b[1]) ^ (d[2] ^ c[2]) ^ d[3];
+        state_arr[1][col] = d[0] ^ (d[1] ^ c[1] ^ b[1] ^ a[1]) ^ (d[2] ^ b[2]) ^ (d[3] ^ c[3]);
+        state_arr[2][col] = (d[0] ^ c[0]) ^ d[1] ^ (d[2] ^ c[2] ^ b[2] ^ a[2]) ^ (d[3] ^ b[3]);
+        state_arr[3][col] = (d[0] ^ b[0]) ^ (d[1] ^ c[1]) ^ d[2] ^ (d[3] ^ c[3] ^ b[3] ^ a[3]);
+    }
 }
 
 void AES::encrypt(std::string &message)
@@ -292,6 +356,28 @@ void AES::encrypt(std::string &message)
     add_round_key(state_arr, nr);
 
     bytes_to_hex_str(message, state_arr);
+}
+
+void AES::decrypt(std::string &cipher)
+{
+    uint8_t state_arr[4][4];
+    
+    get_state_arr(cipher, state_arr);
+    add_round_key(state_arr, nr);
+
+    for(int round = (nr - 1); round > 0; round--)
+    {
+        inv_sub_bytes(state_arr);
+        inv_shift_rows(state_arr);
+        add_round_key(state_arr, round);
+        inv_mix_columns(state_arr);
+    }
+
+    inv_sub_bytes(state_arr);
+    inv_shift_rows(state_arr);
+    add_round_key(state_arr, 0);
+
+    bytes_to_hex_str(cipher, state_arr);
 }
 
 void AES::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
