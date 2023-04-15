@@ -8,6 +8,7 @@
 #include <vector>
 
 enum class AES_key_length { AES_128, AES_192, AES_256};
+enum class AES_mode { ECB, CBC};
 
 class AES
 {
@@ -22,6 +23,10 @@ public:
     void generate_keys(std::string &key);
     void encrypt(std::string &message);
     void decrypt(std::string &cipher);
+
+    // ECB
+    void encrypt_ecb(std::string &message);
+    void decrypt_ecb(std::string &cipher);
 
 private:
     void ascii_to_hex(std::string &ascii_str);
