@@ -25,3 +25,16 @@ void uint8t_to_hexstr(std::string &hex_str, uint8_t *data, const size_t data_len
 
     hex_str = ss.str();
 }
+
+void ascii_to_hex(std::string &ascii_str)
+{
+    std::stringstream ss;
+
+    for(size_t i = 0; i < ascii_str.size(); i++)
+    {
+        ss.width(2);
+        ss << std::hex << (unsigned) ascii_str[i];
+    }
+
+    ascii_str = ss.str();
+}

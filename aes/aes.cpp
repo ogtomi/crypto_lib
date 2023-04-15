@@ -48,19 +48,6 @@ AES::~AES()
     delete[] round_keys;
 }
 
-void AES::ascii_to_hex(std::string &ascii_str)
-{
-    std::stringstream ss;
-
-    for(size_t i = 0; i < ascii_str.size(); i++)
-    {
-        ss.width(2);
-        ss << std::hex << (unsigned) ascii_str[i];
-    }
-
-    ascii_str = ss.str();
-}
-
 void AES::get_state_arr(const std::string &hex_str, uint8_t state_arr[][4])
 {   
     std::string byte_str;
@@ -451,7 +438,7 @@ void AES::xor_iv(std::string &submessage, const std::string &init_vec)
 {
     uint8_t submessage_bin[32];
     uint8_t init_vec_bin[32];
-    size_t data_len = sizeof(submessage_bin) / (2 *sizeof(*submessage_bin));
+    size_t data_len = sizeof(submessage_bin) / (2 * sizeof(*submessage_bin));
 
     hexstr_to_uint8t(init_vec, init_vec_bin);
     hexstr_to_uint8t(submessage, submessage_bin);

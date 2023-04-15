@@ -31,9 +31,7 @@ public:
     void encrypt(std::string &message, AES_mode mode);
     void decrypt(std::string &cipher, AES_mode mode);
 
-private:
-    void ascii_to_hex(std::string &ascii_str);
-    
+private:   
     // KEY GENERATION FUNCTIONS
     void get_key_arr(const std::string &hex_str, uint8_t key_arr[][4]);
     void expand_key(uint8_t arr[][4], uint8_t key_expanded[][4]);
