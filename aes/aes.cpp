@@ -441,3 +441,29 @@ void AES::decrypt_ecb(std::string &cipher)
         cipher += cipher_vec[i];
     }
 }
+
+void AES::encrypt(std::string &message, AES_mode mode)
+{
+    switch(mode)
+    {
+        case AES_mode::ECB:
+            encrypt_ecb(message);
+            break;
+        
+        default:
+            break;
+    }
+}
+
+void AES::decrypt(std::string &cipher, AES_mode mode)
+{
+    switch(mode)
+    {
+        case AES_mode::ECB:
+            decrypt_ecb(cipher);
+            break;
+        
+        default:
+            break;
+    }
+}
