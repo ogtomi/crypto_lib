@@ -54,6 +54,7 @@ private:
     void inv_mix_columns(uint8_t state_arr[][4]);
 
     void bytes_to_hex_str(std::string &message, uint8_t state_arr[][4]);
+    void split_message(const std::string &message, std::vector<std::string> &message_vec);
 
     const uint8_t s_box[16][16] =
     {
