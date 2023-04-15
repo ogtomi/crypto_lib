@@ -6,8 +6,10 @@
 #include <sstream>
 #include <iomanip>
 #include <vector>
+#include "../conversion/conversion.h"
 
 enum class AES_key_length { AES_128, AES_192, AES_256};
+enum class AES_mode { ECB, CBC};
 
 class AES
 {
@@ -20,12 +22,16 @@ public:
     AES(const AES_key_length key_length = AES_key_length::AES_128);
     ~AES();
     void generate_keys(std::string &key);
+
+    // BASE FUNCTIONS
     void encrypt(std::string &message);
     void decrypt(std::string &cipher);
 
-private:
-    void ascii_to_hex(std::string &ascii_str);
-    
+    // OVERLOADED FUNCTIONS FOR DIFFERENT MODES
+    void encrypt(std::string &message, AES_mode mode);
+    void decrypt(std::string &cipher, AES_mode mode);
+
+private:   
     // KEY GENERATION FUNCTIONS
     void get_key_arr(const std::string &hex_str, uint8_t key_arr[][4]);
     void expand_key(uint8_t arr[][4], uint8_t key_expanded[][4]);
@@ -49,6 +55,17 @@ private:
     void inv_mix_columns(uint8_t state_arr[][4]);
 
     void bytes_to_hex_str(std::string &message, uint8_t state_arr[][4]);
+    void split_message(const std::string &message, std::vector<std::string> &message_vec);
+
+    // ECB
+    void encrypt_ecb(std::string &message);
+    void decrypt_ecb(std::string &cipher);
+
+    // CBC
+    std::string generate_iv();
+    void xor_iv(std::string &submessage, const std::string &init_vec);
+    void encrypt_cbc(std::string &message);
+    void decrypt_cbc(std::string &cipher);
 
     const uint8_t s_box[16][16] =
     {
