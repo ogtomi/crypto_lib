@@ -395,3 +395,49 @@ void AES::bytes_to_hex_str(std::string &message, uint8_t state_arr[][4])
 
     message = ss.str();
 }
+
+void AES::split_message(const std::string &message, std::vector<std::string> &message_vec)
+{
+    int message_block_len = 32;
+
+    for(size_t i = 0; i < message.size(); i+= message_block_len)
+    {
+        message_vec.push_back(message.substr(i, message_block_len));
+    }
+}
+
+void AES::encrypt_ecb(std::string &message)
+{
+    std::vector<std::string> message_vec;
+    split_message(message, message_vec);
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        encrypt(message_vec[i]);
+    }
+
+    message = "";
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        message += message_vec[i];
+    }
+}
+
+void AES::decrypt_ecb(std::string &cipher)
+{
+    std::vector<std::string> cipher_vec;
+    split_message(cipher, cipher_vec);
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        decrypt(cipher_vec[i]);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
+}
