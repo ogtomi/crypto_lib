@@ -21,10 +21,16 @@ public:
     AES(const AES_key_length key_length = AES_key_length::AES_128);
     ~AES();
     void generate_keys(std::string &key);
+
+    // BASE FUNCTIONS
     void encrypt(std::string &message);
     void decrypt(std::string &cipher);
 
-    // ECB
+    // OVERLOADED FUNCTIONS FOR DIFFERENT MODES
+    void encrypt(std::string &message, AES_mode mode);
+    void decrypt(std::string &cipher, AES_mode mode);
+
+    //ECB
     void encrypt_ecb(std::string &message);
     void decrypt_ecb(std::string &cipher);
 
