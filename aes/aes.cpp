@@ -442,6 +442,78 @@ void AES::decrypt_ecb(std::string &cipher)
     }
 }
 
+std::string AES::generate_iv()
+{
+    return "000102030405060708090a0b0c0d0e0f";
+}
+
+void AES::xor_iv(std::string &submessage, const std::string &init_vec)
+{
+    uint8_t submessage_bin[32];
+    uint8_t init_vec_bin[32];
+    size_t data_len = sizeof(submessage_bin) / (2 *sizeof(*submessage_bin));
+
+    hexstr_to_uint8t(init_vec, init_vec_bin);
+    hexstr_to_uint8t(submessage, submessage_bin);
+
+    for(int i = 0; i < 64; i++)
+    {
+        submessage_bin[i] ^= init_vec_bin[i];
+    }
+
+    uint8t_to_hexstr(submessage, submessage_bin, data_len);
+}
+
+void AES::encrypt_cbc(std::string &message)
+{
+    std::string init_vec = generate_iv();
+    std::vector<std::string> message_vec;
+
+    split_message(message, message_vec);
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        xor_iv(message_vec[i], init_vec);
+        encrypt(message_vec[i]);
+        init_vec = message_vec[i];
+    }
+
+    message = "";
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        message += message_vec[i];
+    }
+}
+
+void AES::decrypt_cbc(std::string &cipher)
+{
+    std::string init_vec = generate_iv();
+    std::vector<std::string> cipher_vec;
+    std::string temp_vec{};
+
+    split_message(cipher, cipher_vec);
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i > 0)
+        {
+            init_vec = temp_vec;
+        }
+
+        temp_vec = cipher_vec[i];
+        decrypt(cipher_vec[i]);
+        xor_iv(cipher_vec[i], init_vec);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
+}
+
 void AES::encrypt(std::string &message, AES_mode mode)
 {
     switch(mode)
@@ -450,6 +522,10 @@ void AES::encrypt(std::string &message, AES_mode mode)
             encrypt_ecb(message);
             break;
         
+        case AES_mode::CBC:
+            encrypt_cbc(message);
+            break;
+
         default:
             break;
     }
@@ -463,6 +539,10 @@ void AES::decrypt(std::string &cipher, AES_mode mode)
             decrypt_ecb(cipher);
             break;
         
+        case AES_mode::CBC:
+            decrypt_cbc(cipher);
+            break;
+
         default:
             break;
     }
