@@ -501,6 +501,39 @@ void AES::decrypt_cbc(std::string &cipher)
     }
 }
 
+void AES::encrypt_cfb(std::string &message)
+{
+    std::string init_vec = generate_iv();
+    std::vector<std::string> message_vec;
+    std::string temp_vec{};
+
+    split_message(message, message_vec);
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        if(i == 0)
+        {
+            temp_vec = init_vec;
+        }
+
+        encrypt(temp_vec);
+        xor_iv(temp_vec, message_vec[i]);
+        message_vec[i] = temp_vec;
+    }
+
+    message = "";
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        message += message_vec[i];
+    }
+}
+
+void AES::decrypt_cfb(std::string &cipher)
+{
+
+}
+
 void AES::encrypt(std::string &message, AES_mode mode)
 {
     switch(mode)
@@ -511,6 +544,10 @@ void AES::encrypt(std::string &message, AES_mode mode)
         
         case AES_mode::CBC:
             encrypt_cbc(message);
+            break;
+
+        case AES_mode::CFB:
+            encrypt_cfb(message);
             break;
 
         default:
@@ -528,6 +565,10 @@ void AES::decrypt(std::string &cipher, AES_mode mode)
         
         case AES_mode::CBC:
             decrypt_cbc(cipher);
+            break;
+        
+        case AES_mode::CFB:
+            decrypt_cfb(cipher);
             break;
 
         default:
