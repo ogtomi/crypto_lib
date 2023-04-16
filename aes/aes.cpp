@@ -531,7 +531,32 @@ void AES::encrypt_cfb(std::string &message)
 
 void AES::decrypt_cfb(std::string &cipher)
 {
+    std::string init_vec = generate_iv();
+    std::vector<std::string> cipher_vec;
+    std::string temp_vec{};
+    std::string temp_cipher{};
 
+    split_message(cipher, cipher_vec);
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i == 0)
+        {
+            temp_vec = init_vec;
+        }
+
+        encrypt(temp_vec);
+        temp_cipher = cipher_vec[i];
+        xor_iv(cipher_vec[i], temp_vec);
+        temp_vec = temp_cipher;
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
 }
 
 void AES::encrypt(std::string &message, AES_mode mode)
