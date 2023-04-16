@@ -69,7 +69,7 @@ private:
 
     // CFB
     void encrypt_cfb(std::string &message);
-    void decrypt_cbc(std::string &cipher);
+    void decrypt_cfb(std::string &cipher);
 
     const uint8_t s_box[16][16] =
     {
