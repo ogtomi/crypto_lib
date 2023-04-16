@@ -9,7 +9,7 @@
 #include "../conversion/conversion.h"
 
 enum class AES_key_length { AES_128, AES_192, AES_256};
-enum class AES_mode { ECB, CBC};
+enum class AES_mode { ECB, CBC, CFB};
 
 class AES
 {
@@ -65,6 +65,10 @@ private:
     std::string generate_iv();
     void xor_iv(std::string &submessage, const std::string &init_vec);
     void encrypt_cbc(std::string &message);
+    void decrypt_cbc(std::string &cipher);
+
+    // CFB
+    void encrypt_cfb(std::string &message);
     void decrypt_cbc(std::string &cipher);
 
     const uint8_t s_box[16][16] =
