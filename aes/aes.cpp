@@ -588,7 +588,29 @@ void AES::encrypt_ofb(std::string &message)
 
 void AES::decrypt_ofb(std::string &cipher)
 {
+    std::string init_vec = generate_iv();
+    std::vector<std::string> cipher_vec;
+    std::string temp_vec{};
 
+    split_message(cipher, cipher_vec);
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i == 0)
+        {
+            temp_vec = init_vec;
+        }
+
+        encrypt(temp_vec);
+        xor_iv(cipher_vec[i], temp_vec);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
 }
 
 void AES::encrypt(std::string &message, AES_mode mode)
@@ -635,7 +657,7 @@ void AES::decrypt(std::string &cipher, AES_mode mode)
         case AES_mode::OFB:
             decrypt_ofb(cipher);
             break;
-            
+
         default:
             break;
     }
