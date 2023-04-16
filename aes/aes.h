@@ -9,7 +9,7 @@
 #include "../conversion/conversion.h"
 
 enum class AES_key_length { AES_128, AES_192, AES_256};
-enum class AES_mode { ECB, CBC, CFB};
+enum class AES_mode { ECB, CBC, CFB, OFB};
 
 class AES
 {
@@ -70,6 +70,10 @@ private:
     // CFB
     void encrypt_cfb(std::string &message);
     void decrypt_cfb(std::string &cipher);
+
+    // OFB
+    void encrypt_ofb(std::string &message);
+    void decrypt_ofb(std::string &cipher);
 
     const uint8_t s_box[16][16] =
     {
