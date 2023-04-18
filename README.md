@@ -11,3 +11,10 @@ Library with popular cryptographic algorithms implemented from scratch.
     * [DES-ECB](docs/ecb_mode.md)
     * [DES-CBC](docs/cbc_mode.md)
 4. [AES](docs/aes.md)
+    * AES-128
+    * AES-192
+    * AES-256
+    * [AES-ECB](docs/ecb_mode.md)
+    * [AES-CBC](docs/cbc_mode.md)
+    * AES-CFB
+    * AES-OFB
