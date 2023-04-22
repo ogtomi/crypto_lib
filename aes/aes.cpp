@@ -624,11 +624,16 @@ void AES::encrypt_ctr(std::string &message)
 
     int j = 15;
 
-    for(size_t i = 0; i < 1000; i++)
+    for(size_t i = 0; i < message_vec.size(); i++)
     {
-        init_vec = counter;
+        if(i > 0)
+        {
+            init_vec = counter;
+        }
+
         encrypt(init_vec);
-        xor_iv(message_vec[j], init_vec);
+        xor_iv(message_vec[i], init_vec);
+        
         hexstr_to_uint8t(counter, counter_arr);
         counter_arr[j]++;
 
@@ -638,11 +643,52 @@ void AES::encrypt_ctr(std::string &message)
         }
         uint8t_to_hexstr(counter, counter_arr, 16);
     }
+
+    message = "";
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        message += message_vec[i];
+    }
 }
 
 void AES::decrypt_ctr(std::string &cipher)
 {
+    std::string init_vec = generate_iv();
+    std::string counter = init_vec;
+    uint8_t counter_arr[16];
+    std::vector<std::string> cipher_vec;
 
+    split_message(cipher, cipher_vec);
+
+    int j = 15;
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i > 0)
+        {
+            init_vec = counter;
+        }
+
+        encrypt(init_vec);
+        xor_iv(cipher_vec[i], init_vec);
+
+        hexstr_to_uint8t(counter, counter_arr);
+        counter_arr[j]++;
+
+        if(counter_arr[j] == 0xFF)
+        {
+            j--;
+        }
+        uint8t_to_hexstr(counter, counter_arr, 16);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
 }
 
 void AES::encrypt(std::string &message, AES_mode mode)
