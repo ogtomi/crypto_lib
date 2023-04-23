@@ -613,6 +613,84 @@ void AES::decrypt_ofb(std::string &cipher)
     }
 }
 
+void AES::encrypt_ctr(std::string &message)
+{
+    std::string init_vec = generate_iv();
+    std::string counter = init_vec;
+    uint8_t counter_arr[16];
+    std::vector<std::string> message_vec;
+
+    split_message(message, message_vec);
+
+    int j = 15;
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        if(i > 0)
+        {
+            init_vec = counter;
+        }
+
+        encrypt(init_vec);
+        xor_iv(message_vec[i], init_vec);
+        
+        hexstr_to_uint8t(counter, counter_arr);
+        counter_arr[j]++;
+
+        if(counter_arr[j] == 0xFF)
+        {
+            j--;
+        }
+        uint8t_to_hexstr(counter, counter_arr, 16);
+    }
+
+    message = "";
+
+    for(size_t i = 0; i < message_vec.size(); i++)
+    {
+        message += message_vec[i];
+    }
+}
+
+void AES::decrypt_ctr(std::string &cipher)
+{
+    std::string init_vec = generate_iv();
+    std::string counter = init_vec;
+    uint8_t counter_arr[16];
+    std::vector<std::string> cipher_vec;
+
+    split_message(cipher, cipher_vec);
+
+    int j = 15;
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        if(i > 0)
+        {
+            init_vec = counter;
+        }
+
+        encrypt(init_vec);
+        xor_iv(cipher_vec[i], init_vec);
+
+        hexstr_to_uint8t(counter, counter_arr);
+        counter_arr[j]++;
+
+        if(counter_arr[j] == 0xFF)
+        {
+            j--;
+        }
+        uint8t_to_hexstr(counter, counter_arr, 16);
+    }
+
+    cipher = "";
+
+    for(size_t i = 0; i < cipher_vec.size(); i++)
+    {
+        cipher += cipher_vec[i];
+    }
+}
+
 void AES::encrypt(std::string &message, AES_mode mode)
 {
     switch(mode)
@@ -631,6 +709,10 @@ void AES::encrypt(std::string &message, AES_mode mode)
 
         case AES_mode::OFB:
             encrypt_ofb(message);
+            break;
+
+        case AES_mode::CTR:
+            encrypt_ctr(message);
             break;
 
         default:
@@ -656,6 +738,10 @@ void AES::decrypt(std::string &cipher, AES_mode mode)
 
         case AES_mode::OFB:
             decrypt_ofb(cipher);
+            break;
+
+        case AES_mode::CTR:
+            decrypt_ctr(cipher);
             break;
 
         default:
