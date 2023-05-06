@@ -7,6 +7,11 @@
 #include "des/des_cbc.h"
 #include "des3/des3.h"
 #include "aes/aes.h"
+#include "meta/ecb.h"
+#include "meta/cbc.h"
+#include "meta/cfb.h"
+#include "meta/ofb.h"
+#include "meta/ctr.h"
 
 int main()
 {
@@ -18,10 +23,13 @@ int main()
 
     AES aes(AES_key_length::AES_128);
     aes.generate_keys(key_128);
+    CTR<AES> aes_cbc(aes);
+    
+    std::cout << "META" << std::endl;
     std::cout << message_ecb << std::endl;
-    aes.encrypt(message_ecb, AES_mode::CBC);
+    aes_cbc.encrypt(message_ecb);
     std::cout << message_ecb << std::endl;
-    aes.decrypt(message_ecb, AES_mode::CBC);
+    aes_cbc.decrypt(message_ecb);
     std::cout << message_ecb << std::endl;
 
     return 0;
