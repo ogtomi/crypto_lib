@@ -38,3 +38,13 @@ void ascii_to_hex(std::string &ascii_str)
 
     ascii_str = ss.str();
 }
+
+void split_message(const std::string &message, std::vector<std::string> &message_vec)
+{
+    int message_block_len = 32;
+
+    for(size_t i = 0; i < message.size(); i+= message_block_len)
+    {
+        message_vec.push_back(message.substr(i, message_block_len));
+    }
+}
