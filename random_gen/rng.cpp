@@ -1,6 +1,19 @@
 #include "rng.h"
 
-std::string RNG::generate_iv()
+std::string RNG::generate_iv(uint8_t len)
 {
-    return "000102030405060708090a0b0c0d0e0f";
+    std::string iv_str{};
+    unsigned char iv[len];
+
+    int rc = RAND_bytes(iv, len);
+    unsigned long err = ERR_get_error();
+
+    if(rc != 1)
+    {
+        std::cout << err << std::endl;
+    }
+
+    bytes_to_hex_str(iv_str, iv, len);
+
+    return iv_str;
 }
