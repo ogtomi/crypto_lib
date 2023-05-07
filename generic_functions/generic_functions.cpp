@@ -16,3 +16,16 @@ void xor_iv(std::string &submessage, const std::string &init_vec)
 
     uint8t_to_hexstr(submessage, submessage_bin, data_len);
 }
+
+void bytes_to_hex_str(std::string &hex_str, const unsigned char *byte_arr, const int size)
+{
+    std::stringstream ss;
+    ss << std::setfill('0') << std::hex;
+
+    for(int i = 0; i < size; i++)
+    {
+        ss << std::setw(2) << std::hex << (unsigned)byte_arr[i];
+    }
+
+    hex_str = ss.str();
+}
