@@ -13,16 +13,19 @@ class CFB
 private:
     AlgorithmType& alg;
     RNG rng;
+    uint8_t iv_len = 16;
+    std::string iv;
 
 public:
     CFB(AlgorithmType& alg)
         :alg(alg)
     {
+        iv = rng.generate_iv(iv_len);
     };
 
     void encrypt(std::string &message)
     {
-        std::string init_vec = rng.generate_iv();
+        std::string init_vec = iv;
         std::vector<std::string> message_vec;
         std::string temp_vec{};
 
@@ -50,7 +53,7 @@ public:
 
     void decrypt(std::string &cipher)
     {
-        std::string init_vec = rng.generate_iv();
+        std::string init_vec = iv;
         std::vector<std::string> cipher_vec;
         std::string temp_vec{};
         std::string temp_cipher{};
