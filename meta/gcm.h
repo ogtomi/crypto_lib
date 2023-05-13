@@ -20,16 +20,13 @@ public:
         iv = rng.generate_iv(iv_len);
     };
 
-    void encrypt(std::string &message, std::string &auth_tag)
+    void encrypt(std::string &message, std::string auth_data, std::string &auth_tag)
     {
         std::string init_vec = iv;
         std::string counter = init_vec;
-        std::string iv_auth = iv;
         uint8_t counter_arr[16];
         std::vector<std::string> message_vec;
-        std::string message_len = std::to_string(message.size());
-
-        alg.encrypt(auth_tag);
+        std::string message_len = std::to_string(message.size() * 8);
 
         split_message(message, message_vec);
 
@@ -44,7 +41,7 @@ public:
 
             alg.encrypt(init_vec);
             xor_iv(message_vec[i], init_vec);
-            xor_iv(auth_tag, message_vec[i]);
+            xor_iv(auth_data, message_vec[i]);
 
             hexstr_to_uint8t(counter, counter_arr);
             counter_arr[j]++;
@@ -61,10 +58,11 @@ public:
             }
         }
 
-        
-        xor_iv(auth_tag, message_len);
-        alg.encrypt(iv_auth);
-        xor_iv(auth_tag, iv_auth);
+        xor_iv(auth_data, message_len);
+
+        auth_tag = iv;
+        alg.encrypt(auth_tag);
+        xor_iv(auth_tag, auth_data);
 
         message = "";
 
@@ -74,8 +72,53 @@ public:
         }
     };
 
-    void decrypt(std::string &cipher)
+    void decrypt(std::string &cipher, std::string auth_data, const std::string &auth_tag)
     {
+        std::string init_vec = iv;
+        std::string counter = init_vec;
+        std::string auth_iv = iv;
+        uint8_t counter_arr[16];
+        std::vector<std::string> cipher_vec;
+        std::string cipher_len = std::to_string(cipher.size() * 8);
 
+        split_message(cipher, cipher_vec);
+
+        int j = 15;
+
+        for(size_t i = 0; i < cipher_vec.size(); i++)
+        {
+            if(i > 0)
+            {
+                init_vec = counter;
+            }
+
+            alg.encrypt(init_vec);
+            xor_iv(cipher_vec[i], init_vec);
+            xor_iv(auth_data, cipher_vec[i]);
+
+            hexstr_to_uint8t(counter, counter_arr);
+            counter_arr[j]++;
+
+            if(counter_arr[j] == 0xFF)
+            {
+                j--;
+            }
+            uint8t_to_hexstr(counter, counter_arr, 16);
+        }
+
+        xor_iv(auth_data, cipher_len);
+
+        alg.encrypt(auth_iv);
+        xor_iv(auth_iv, auth_data);
+
+        cipher = "";
+
+        for(size_t i = 0; i < cipher_vec.size(); i++)
+        {
+            cipher += cipher_vec[i];
+        }
+
+        std::cout << auth_iv << std::endl;
+        std::cout << auth_tag << std::endl;
     };
 };
