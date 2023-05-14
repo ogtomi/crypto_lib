@@ -9,7 +9,7 @@ void xor_iv(std::string &submessage, const std::string &init_vec)
     hexstr_to_uint8t(init_vec, init_vec_bin);
     hexstr_to_uint8t(submessage, submessage_bin);
 
-    for(int i = 0; i < 64; i++)
+    for(int i = 0; i < 32; i++)
     {
         submessage_bin[i] ^= init_vec_bin[i];
     }
