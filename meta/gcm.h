@@ -31,6 +31,14 @@ public:
         split_message(message, message_vec);
 
         int j = 15;
+        
+        hexstr_to_uint8t(counter, counter_arr);
+        if(counter_arr[j] == 0xFF)
+        {
+            j--;
+        }
+        counter_arr[j]++;
+        uint8t_to_hexstr(counter, counter_arr, 16);
 
         for(size_t i = 0; i < message_vec.size(); i++)
         {
@@ -44,12 +52,11 @@ public:
             xor_iv(auth_data, message_vec[i]);
 
             hexstr_to_uint8t(counter, counter_arr);
-            counter_arr[j]++;
-
             if(counter_arr[j] == 0xFF)
             {
                 j--;
             }
+            counter_arr[j]++;
             uint8t_to_hexstr(counter, counter_arr, 16);
 
             for(size_t i = 0; i < message_vec.size(); i++)
@@ -80,10 +87,18 @@ public:
         uint8_t counter_arr[16];
         std::vector<std::string> cipher_vec;
         std::string cipher_len = std::to_string(cipher.size() * 8);
-
+        
         split_message(cipher, cipher_vec);
 
         int j = 15;
+
+        hexstr_to_uint8t(counter, counter_arr);
+        if(counter_arr[j] == 0xFF)
+        {
+            j--;
+        }
+        counter_arr[j]++;
+        uint8t_to_hexstr(counter, counter_arr, 16);
 
         for(size_t i = 0; i < cipher_vec.size(); i++)
         {
@@ -97,12 +112,11 @@ public:
             xor_iv(auth_data, cipher_vec[i]);
 
             hexstr_to_uint8t(counter, counter_arr);
-            counter_arr[j]++;
-
             if(counter_arr[j] == 0xFF)
             {
                 j--;
             }
+            counter_arr[j]++;
             uint8t_to_hexstr(counter, counter_arr, 16);
         }
 
