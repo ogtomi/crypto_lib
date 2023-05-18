@@ -1,10 +1,10 @@
 # Triple DES
 
-Tripple DES is a symmetric key block cipher which applies the [DES](/docs/des.md) algorithm three times to each data block.
+Triple DES is a symmetric key block cipher which applies the [DES](/docs/des.md) algorithm three times to each data block.
 
 ## Steps in algorithm
 
-First the key is generated. It consists of three different [DES](/docs/des.md) keys- `k1`, `k2`, `k3`. This means the key has a length of 168bits (3*56 bits).
+First the key is generated. It consists of three different [DES](/docs/des.md) keys- `k1`, `k2`, `k3`. This means the key has a length of 168 bits (3*56 bits).
 
 ## Encryption
 

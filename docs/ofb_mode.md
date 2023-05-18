@@ -16,4 +16,4 @@ One of the advantages is that the bit sequence with which plaintext data is XORe
 
 ## Disadvantages of OFB mode
 
-A disadvantage of OFB is the time-consuming synchronization of the block ciphers between transmitter and receiver, since OFB, in contrast to [CFB](/docs/cfb_mode.md) is fundamentally not self-synchronizing.
+A disadvantage of OFB is the time-consuming synchronization of the block ciphers between transmitter and receiver, since OFB in contrast to [CFB](/docs/cfb_mode.md) is fundamentally not self-synchronizing.
