@@ -50,6 +50,7 @@ public:
             alg.encrypt(init_vec);
             xor_iv(message_vec[i], init_vec);
             xor_iv(auth_data, message_vec[i]);
+            gf_multiplication(auth_data, iv);
 
             hexstr_to_uint8t(counter, counter_arr);
             if(counter_arr[j] == 0xFF)
@@ -110,6 +111,7 @@ public:
             alg.encrypt(init_vec);
             xor_iv(cipher_vec[i], init_vec);
             xor_iv(auth_data, cipher_vec[i]);
+            gf_multiplication(auth_data, iv);
 
             hexstr_to_uint8t(counter, counter_arr);
             if(counter_arr[j] == 0xFF)
@@ -135,4 +137,23 @@ public:
         std::cout << auth_iv << std::endl;
         std::cout << auth_tag << std::endl;
     };
+
+    void gf_multiplication(std::string &auth_data, const std::string &hash_key)
+    {
+        uint8_t auth_data_bin[16];
+        uint8_t hash_key_bin[16];
+        size_t data_len = sizeof(auth_data_bin) / (2 * sizeof(*auth_data_bin));
+        
+        uint8_t result_poly[32];
+
+        hexstr_to_uint8t(hash_key, hash_key_bin);
+        hexstr_to_uint8t(auth_data, auth_data_bin);
+
+        for(int i = 0; i < 16; i++)
+        {
+
+        }
+
+        uint8t_to_hexstr(auth_data, auth_data_bin, data_len);
+    }
 };
