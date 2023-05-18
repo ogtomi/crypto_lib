@@ -10,7 +10,7 @@ OFB (Output Feedback Mode) is an operating mode in which block ciphers can be op
 
 ![](/docs/images/OFB_decryption.png)
 
-## Advantages of OFB
+## Advantages of OFB mode
 
 One of the advantages is that the bit sequence with which plaintext data is XORed can be calculated in advance. Furthermore, as with all stream ciphers, OFB has the advantage that during decryption, transmission errors in the ciphertext only affect the corresponding bit position in the decrypted plaintext and the error is not propagated in the plaintext.
 
