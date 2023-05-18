@@ -11,6 +11,7 @@
 #include "meta/cfb.h"
 #include "meta/ofb.h"
 #include "meta/ctr.h"
+#include "meta/gcm.h"
 
 int main()
 {
@@ -20,15 +21,17 @@ int main()
     std::string message = "00112233445566778899aabbccddeeff";
     std::string message_ll = "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff";
 
+    std::string auth_data = "00000000000000000000000000000000";
+    std::string auth_tag{};
+
     AES aes(AES_key_length::AES_128);
     aes.generate_keys(key_128);
-    CBC<AES> aes_cbc(aes);
-    
-    std::cout << "META" << std::endl;
+    GCM<AES> aes_gcm(aes);
+
     std::cout << message_ll << std::endl;
-    aes_cbc.encrypt(message_ll);
+    aes_gcm.encrypt(message_ll, auth_data, auth_tag);
     std::cout << message_ll << std::endl;
-    aes_cbc.decrypt(message_ll);
+    aes_gcm.decrypt(message_ll, auth_data, auth_tag);
     std::cout << message_ll << std::endl;
 
     return 0;
