@@ -1,6 +1,6 @@
 # DES
 
-DES (Data Encryption Standard) is a symmetric key algorithm for data encrption. It is based on the two fundamental attributes of cryptography: substitution and transposition. DES consists of 16 steps, each of which is called a round. Each round performs the steps fo substitution and transposition.
+DES (Data Encryption Standard) is a symmetric key algorithm for data encrption. It is based on the two fundamental attributes of cryptography: substitution and transposition. DES consists of 16 steps, each of which is called a round. Each round performs the steps of substitution and transposition.
 
 ## Encryption
 
@@ -11,7 +11,7 @@ DES is a block cipher - it operates on plaintext blocks of a given size (64-bits
 ### Subkeys generation
 
 1. Permutation of the original key<br>
-To generate subkeys a hexadecimel key `K` is needed. The 63-bit key is permuted according to the `pc_1` table.
+To generate subkeys a hexadecimel key `K` is needed. The 64-bit key is permuted according to the `pc_1` table.
     > NOTE: Only 56 bits of the original key appear in the permuted key.
 
 2. Split the key into left and right halves
@@ -42,7 +42,7 @@ To generate subkeys a hexadecimel key `K` is needed. The 63-bit key is permuted 
 
     To calculate `f` first each block is expanded from 32 bits to 48 bits. This is done using `expansion_table`. Next that output is XORed with subkey $K_n$. The next step is to apply `s_boxes` array. To do that 48-bit message is split into eight groups of six bits.
 
-    > NOTE: First bit and last bit represent binary number from 0 to 3 which corresponds to the number of the row in the S-box. The middle 4 bits represent binary number from 0 to 15 which is the number of column.
+    > NOTE: First bit and last bit represent binary number from 0 to 3 which corresponds to the number of the row in the S-box. The middle 4 bits represent binary number from 0 to 15 which is the number of the column.
 
     The final stage in the calculation of `f` is to do a permutation according to the `p` table.<br>
 
