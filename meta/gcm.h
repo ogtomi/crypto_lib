@@ -141,19 +141,35 @@ public:
     void gf_multiplication(std::string &auth_data, const std::string &hash_key)
     {
         uint8_t auth_data_bin[16];
+        uint64_t auth_data_bin_expanded[2];
         uint8_t hash_key_bin[16];
-        size_t data_len = sizeof(auth_data_bin) / (2 * sizeof(*auth_data_bin));
-        
-        uint8_t result_poly[32];
+        uint64_t hash_key_bin_expanded[2];
+
+        size_t auth_data_len = sizeof(auth_data_bin) / (2 * sizeof(*auth_data_bin));
 
         hexstr_to_uint8t(hash_key, hash_key_bin);
         hexstr_to_uint8t(auth_data, auth_data_bin);
+        uint8t_to_uint64t_arr(hash_key_bin, hash_key_bin_expanded, 2);
 
-        for(int i = 0; i < 16; i++)
-        {
+        uint8t_to_hexstr(auth_data, auth_data_bin, auth_data_len);
+    }
+    
+    void uint8t_to_uint64t_arr(uint8_t *uint8t_arr, uint64_t *uint64t_arr, const size_t &uint64t_arr_size)
+    {
+        int j = 0;
 
+        for(size_t i = 0; i < uint64t_arr_size; i++)
+        {  
+            uint64t_arr[i] = (((uint64_t)uint8t_arr[j] << 56) & 0xFF00000000000000) |
+                             (((uint64_t)uint8t_arr[j + 1] << 48) & 0x00FF000000000000) | 
+                             (((uint64_t)uint8t_arr[j + 2] << 40) & 0x0000FF0000000000) | 
+                             (((uint64_t)uint8t_arr[j + 3] << 32) & 0x000000FF00000000) |
+                             (((uint64_t)uint8t_arr[j + 4] << 24) & 0x00000000FF000000) | 
+                             (((uint64_t)uint8t_arr[j + 5] << 16) & 0x0000000000FF0000) | 
+                             (((uint64_t)uint8t_arr[j + 6] << 8) & 0x000000000000FF00) | 
+                             (((uint64_t)uint8t_arr[j + 7]) & 0x00000000000000FF);
+
+            j += 8;
         }
-
-        uint8t_to_hexstr(auth_data, auth_data_bin, data_len);
     }
 };
