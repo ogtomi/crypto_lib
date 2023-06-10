@@ -28,24 +28,24 @@ int main()
     
     DES des;
     des.generate_keys(key_64);
-    CTR<DES> ecb_des(des, 8);
+    CTR<DES> ctr_des(des, 8);
 
     std::cout << "\nDES in Counter mode" << std::endl;
     std::cout << message << std::endl;
-    ecb_des.encrypt(message, 8);
+    ctr_des.encrypt(message, 8);
     std::cout << message << std::endl;
-    ecb_des.decrypt(message, 8);
+    ctr_des.decrypt(message, 8);
     std::cout << message << std::endl;
 
     DES3 des3;
     des3.generate_keys(key_arr);
-    ECB<DES3> ecb_des3(des3);
+    OFB<DES3> ofb_des3(des3, 8);
 
-    std::cout << "\nTriple DES in ECB mode" << std::endl;
+    std::cout << "\nTriple DES in OFB mode" << std::endl;
     std::cout << message << std::endl;
-    ecb_des3.encrypt(message, 8);
+    ofb_des3.encrypt(message, 8);
     std::cout << message << std::endl;
-    ecb_des3.decrypt(message, 8);
+    ofb_des3.decrypt(message, 8);
     std::cout << message << std::endl;
     
     AES aes(AES_key_length::AES_128);
