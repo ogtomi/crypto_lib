@@ -17,19 +17,19 @@ private:
     std::string iv;
 
 public:
-    CFB(AlgorithmType& alg)
-        :alg(alg)
+    CFB(AlgorithmType& alg, const uint8_t &iv_len)
+        :alg(alg), iv_len(iv_len)
     {
         iv = rng.generate_iv(iv_len);
     };
 
-    void encrypt(std::string &message)
+    void encrypt(std::string &message, const uint8_t &block_size)
     {
         std::string init_vec = iv;
         std::vector<std::string> message_vec;
         std::string temp_vec{};
 
-        split_message(message, message_vec);
+        split_message(message, message_vec, block_size * 2);
 
         for(size_t i = 0; i < message_vec.size(); i++)
         {
@@ -39,7 +39,7 @@ public:
             }
 
             alg.encrypt(temp_vec);
-            xor_iv(temp_vec, message_vec[i]);
+            xor_iv(temp_vec, message_vec[i], block_size);
             message_vec[i] = temp_vec;
         }
 
@@ -51,14 +51,14 @@ public:
         }
     };
 
-    void decrypt(std::string &cipher)
+    void decrypt(std::string &cipher, const uint8_t &block_size)
     {
         std::string init_vec = iv;
         std::vector<std::string> cipher_vec;
         std::string temp_vec{};
         std::string temp_cipher{};
 
-        split_message(cipher, cipher_vec);
+        split_message(cipher, cipher_vec, block_size * 2);
 
         for(size_t i = 0; i < cipher_vec.size(); i++)
         {
@@ -69,7 +69,7 @@ public:
 
             alg.encrypt(temp_vec);
             temp_cipher = cipher_vec[i];
-            xor_iv(cipher_vec[i], temp_vec);
+            xor_iv(cipher_vec[i], temp_vec, block_size);
             temp_vec = temp_cipher;
         }
 
