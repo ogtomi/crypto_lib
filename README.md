@@ -22,3 +22,9 @@ Implementation for modes of operation involves template metaprogramming. It is a
 3. [OFB](docs/ofb_mode.md)
 4. [CFB](docs/cfb_mode.md)
 5. [CTR](docs/ctr_mode.md)
+
+### Libraries used
+- [OpenSSL](https://www.openssl.org/)
+    - generating pseudo-random initialization vector
+- [GMP](https://gmplib.org/)
+    - Handling big numbers for RSA algorithm
