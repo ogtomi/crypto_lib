@@ -8,6 +8,7 @@
 #include "meta/cfb.h"
 #include "meta/ofb.h"
 #include "meta/ctr.h"
+#include "sha256/sha256.h"
 
 int main()
 {
@@ -30,34 +31,41 @@ int main()
     des.generate_keys(key_64);
     CTR<DES> ctr_des(des, 8);
 
-    std::cout << "\nDES in Counter mode" << std::endl;
-    std::cout << message << std::endl;
+    std::cout << "\nDES in CTR mode" << std::endl;
+    std::cout << "Message: \n" << message << std::endl;
     ctr_des.encrypt(message, 8);
-    std::cout << message << std::endl;
+    std::cout << "Encrypted message: \n" << message << std::endl;
     ctr_des.decrypt(message, 8);
-    std::cout << message << std::endl;
+    std::cout << "Decrypted message: \n" << message << std::endl;
 
     DES3 des3;
     des3.generate_keys(key_arr);
     OFB<DES3> ofb_des3(des3, 8);
 
     std::cout << "\nTriple DES in OFB mode" << std::endl;
-    std::cout << message << std::endl;
+    std::cout << "Message: \n" << message << std::endl;
     ofb_des3.encrypt(message, 8);
-    std::cout << message << std::endl;
+    std::cout << "Encrypted message: \n" << message << std::endl;
     ofb_des3.decrypt(message, 8);
-    std::cout << message << std::endl;
+    std::cout << "Decrypted message: \n" << message << std::endl;
     
     AES aes(AES_key_length::AES_128);
     aes.generate_keys(key_128);
     CBC<AES> aes_ecb(aes, 16);
 
     std::cout << "\nAES-128 in CBC mode" << std::endl;
-    std::cout << message_ll << std::endl;
+    std::cout << "Message: \n" << message_ll << std::endl;
     aes_ecb.encrypt(message_ll, 16);
-    std::cout << message_ll << std::endl;
+    std::cout << "Encrypted message: \n" << message_ll << std::endl;
     aes_ecb.decrypt(message_ll, 16);
-    std::cout << message_ll << std::endl;
+    std::cout << "Decrypted message: \n" << message_ll << std::endl;
+
+    std::string hash_str = "Testing input for the SHA256. Hash will be produced from this string.";
+    
+    SHA256 sha256;
+    std::string out_hash = sha256.digest(hash_str);
+
+    std::cout << "\nSHA-256 input str: \n" << hash_str << "\nis: \n" << out_hash << std::endl;
 
     return 0;
 }
